@@ -4,12 +4,12 @@
 	<inherits name='com.badlogic.gdx.backends.gdx_backends_gwt' />
 	<inherits name='com.badlogic.gdx.controllers' />
 	<inherits name='com.badlogic.gdx.controllers.controllers-gwt' />
-	<inherits name='Box2DLights' />
 	<inherits name='com.badlogic.gdx.physics.box2d.box2d-gwt' />
-	<inherits name='com.badlogic.ashley_gwt' />
+	<inherits name='Box2DLights' />
 	<inherits name='com.badlogic.gdx.ai' />
+	<inherits name='com.badlogic.ashley_gwt' />
 
-	<inherits name='FBLAgame' />
+	<inherits name='FBLA' />
 	<entry-point class='com.fbla.game.client.HtmlLauncher' />
 	<set-configuration-property name='xsiframe.failIfScriptTag' value='FALSE'/>
 	<set-configuration-property name="gdx.assetpath" value="../assets" />

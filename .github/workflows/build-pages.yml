@@ -1,5 +1,9 @@
 name: Build WebPage
-on: pull_request
+on: 
+  push:
+    branches:
+      - main
+      - zevin
 jobs:
   build:
     permissions:
@@ -23,11 +27,11 @@ jobs:
     - name: Execute Gradle build
       run: ./gradlew html:dist
 
-    - name: Upload build reports
-      uses: actions/upload-artifact@v3
+    - name: Upload Artifact
+      uses: actions/upload-pages-artifact@v2
       with:
-        name: github-pages
-        path: html/build/dist
+        # upload entire directory
+        path: 'html/build/dist'
 
   deploy:
     permissions:

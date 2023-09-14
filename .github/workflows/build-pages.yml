@@ -1,5 +1,9 @@
 name: Build WebPage
-on: pull_request
+on: 
+  push:
+    branches:
+      - main
+      - zevin
 jobs:
   build:
     permissions:

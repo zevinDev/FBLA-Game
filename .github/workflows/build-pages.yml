@@ -2,9 +2,13 @@ name: Build WebPage
 on: pull_request
 jobs:
   build:
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
+        os: [ubuntu-latest]
     runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v3
@@ -26,6 +30,10 @@ jobs:
         path: html/build/dist
 
   deploy:
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
     environment:
       name: github-pages
       url: ${{steps.deployment.outputs.page_url}}

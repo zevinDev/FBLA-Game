@@ -44,7 +44,7 @@ public class GameScreen extends ScreenAdapter {
     @Override
     public void show() {
         // Load the sprite sheet as a Texture
-		spriteSheet = new Texture(Gdx.files.internal("tyler.png"));
+		spriteSheet = new Texture(Gdx.files.internal("zevin.png"));
 
 		// Use the split utility method to create a 2D array of TextureRegions. This is
 		// possible because this sprite sheet contains frames of equal size and they are
@@ -89,6 +89,8 @@ public class GameScreen extends ScreenAdapter {
 		stateTime = 0f;
     }
 
+	// This method runs for every frame
+	// If code is innefiecent game will lag (for loop > if statement)
     @Override
     public void render(float delta) {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT); // Clear screen
@@ -97,13 +99,13 @@ public class GameScreen extends ScreenAdapter {
 		// Get player input
 		playerIdle = true;
 		if(Gdx.input.isKeyPressed(Keys.A)) {
-			playerX -= Gdx.graphics.getDeltaTime() * playerSpeed;
+			playerX -= Gdx.graphics.getDeltaTime() * (playerSpeed + 25);
 			playerIdle = false;
 			playerIdleFrame = 3;
 			currentFrame = leftAnimation.getKeyFrame(stateTime, true);
 		}
 	 	if(Gdx.input.isKeyPressed(Keys.D)) {
-			playerX += Gdx.graphics.getDeltaTime() * playerSpeed;
+			playerX += Gdx.graphics.getDeltaTime() * (playerSpeed + 25);
 			playerIdle = false;
 			playerIdleFrame = 2;
 			currentFrame = rightAnimation.getKeyFrame(stateTime, true);
@@ -127,11 +129,7 @@ public class GameScreen extends ScreenAdapter {
 
 		spriteBatch.begin();
 		spriteBatch.draw(currentFrame, playerX, playerY, 128, 128); // Draw player
-
-
 		spriteBatch.end();
-
-    
 
     }
 

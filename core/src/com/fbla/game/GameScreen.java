@@ -17,12 +17,15 @@ public class GameScreen extends ScreenAdapter {
 
 
 	// Objects used
+	Animation<TextureRegion> npcAnimation; // Must declare frame type (TextureRegion)
 	Animation<TextureRegion> downAnimation; // Must declare frame type (TextureRegion)
 	Animation<TextureRegion> idleAnimation; // Must declare frame type (TextureRegion)
 	Animation<TextureRegion> upAnimation; // Must declare frame type (TextureRegion)
 	Animation<TextureRegion> leftAnimation; // Must declare frame type (TextureRegion)
 	Animation<TextureRegion> rightAnimation; // Must declare frame type (TextureRegion)
 	Texture spriteSheet;
+	Texture gasStation;
+	Texture npc; 
 	SpriteBatch spriteBatch;
 	TextureRegion currentFrame;
 
@@ -45,11 +48,18 @@ public class GameScreen extends ScreenAdapter {
     public void show() {
         // Load the sprite sheet as a Texture
 		spriteSheet = new Texture(Gdx.files.internal("zevin.png"));
+		gasStation = new Texture(Gdx.files.internal("gas_station.png"));
+		npc = new Texture(Gdx.files.internal("tyler.png"));
 
 		// Use the split utility method to create a 2D array of TextureRegions. This is
 		// possible because this sprite sheet contains frames of equal size and they are
 		// all aligned.
 		TextureRegion[][] tmp = TextureRegion.split(spriteSheet, 16, 16);
+		TextureRegion[][] npcSpritesheet = TextureRegion.split(npc, 16, 16); 
+
+		TextureRegion[] npcIdle =  new TextureRegion[2];
+		npcIdle[0] = npcSpritesheet[2][2];
+		npcIdle[1] = npcSpritesheet[3][0];
 
 		// Place the regions into a 1D array in the correct order, starting from the top
 		// left, going across first. The Animation constructor requires a 1D array.
@@ -76,6 +86,7 @@ public class GameScreen extends ScreenAdapter {
 		idleFrames[3] = tmp[2][2];
 
 
+		npcAnimation = new Animation<TextureRegion>(.25f, npcIdle);
 		// Initialize the Animation with the frame interval and array of frames
 		downAnimation = new Animation<TextureRegion>(.25f, downFrames);
 		upAnimation = new Animation<TextureRegion>(.25f, upFrames);
@@ -98,25 +109,25 @@ public class GameScreen extends ScreenAdapter {
 
 		// Get player input
 		playerIdle = true;
-		if(Gdx.input.isKeyPressed(Keys.A)) {
+		if(Gdx.input.isKeyPressed(Keys.LEFT)) {
 			playerX -= Gdx.graphics.getDeltaTime() * (playerSpeed + 25);
 			playerIdle = false;
 			playerIdleFrame = 3;
 			currentFrame = leftAnimation.getKeyFrame(stateTime, true);
 		}
-	 	if(Gdx.input.isKeyPressed(Keys.D)) {
+	 	if(Gdx.input.isKeyPressed(Keys.RIGHT)) {
 			playerX += Gdx.graphics.getDeltaTime() * (playerSpeed + 25);
 			playerIdle = false;
 			playerIdleFrame = 2;
 			currentFrame = rightAnimation.getKeyFrame(stateTime, true);
 		}
-		if(Gdx.input.isKeyPressed(Keys.W)) {
+		if(Gdx.input.isKeyPressed(Keys.UP)) {
 			playerY += Gdx.graphics.getDeltaTime() * playerSpeed;
 			playerIdle = false;
 			playerIdleFrame = 1;
 			currentFrame = upAnimation.getKeyFrame(stateTime, true);
 		}
-	 	if(Gdx.input.isKeyPressed(Keys.S)) {
+	 	if(Gdx.input.isKeyPressed(Keys.DOWN)) {
 			playerY -= Gdx.graphics.getDeltaTime() * playerSpeed;
 			playerIdle = false;
 			playerIdleFrame = 0;
@@ -128,6 +139,8 @@ public class GameScreen extends ScreenAdapter {
 		}
 
 		spriteBatch.begin();
+		spriteBatch.draw(gasStation, 0, 0, 768, 1024);
+		spriteBatch.draw(npcAnimation.getKeyFrame(stateTime, true), 496, 129, 128, 128);
 		spriteBatch.draw(currentFrame, playerX, playerY, 128, 128); // Draw player
 		spriteBatch.end();
 

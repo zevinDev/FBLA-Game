@@ -2,11 +2,20 @@ package com.fbla.game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
+import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.maps.tiled.TideMapLoader;
+import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
+import com.badlogic.gdx.maps.tiled.TmxMapLoader;
+import com.badlogic.gdx.maps.tiled.renderers.BatchTiledMapRenderer;
+import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.Input.Keys;
 
 
@@ -26,6 +35,7 @@ public class GameScreen extends ScreenAdapter {
 	Texture spriteSheet;
 	Texture gasStation;
 	Texture npc; 
+	private OrthographicCamera cam;
 	SpriteBatch spriteBatch;
 	TextureRegion currentFrame;
 
@@ -46,9 +56,13 @@ public class GameScreen extends ScreenAdapter {
 
     @Override
     public void show() {
+		// Constructs a new OrthographicCamera, using the given viewport width and height
+		// Height is multiplied by aspect ratio.
+		cam = new OrthographicCamera(96, 128);
+		cam.update();
+
         // Load the sprite sheet as a Texture
-		spriteSheet = new Texture(Gdx.files.internal("zevin.png"));
-		gasStation = new Texture(Gdx.files.internal("gas_station.png"));
+		spriteSheet = new Texture(Gdx.files.internal("tyler.png"));
 		npc = new Texture(Gdx.files.internal("tyler.png"));
 
 		// Use the split utility method to create a 2D array of TextureRegions. This is
@@ -106,7 +120,20 @@ public class GameScreen extends ScreenAdapter {
     public void render(float delta) {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT); // Clear screen
 		stateTime += Gdx.graphics.getDeltaTime(); // Accumulate elapsed animation time
+		cam.position.set(playerX, playerY, 0);	
+		cam.update();
 
+		handleInput();
+		drawScene();
+    }
+
+    @Override
+    public void hide() {
+        spriteBatch.dispose();
+		spriteSheet.dispose();
+    }
+
+	private void handleInput(){
 		// Get player input
 		playerIdle = true;
 		if(Gdx.input.isKeyPressed(Keys.LEFT)) {
@@ -137,18 +164,12 @@ public class GameScreen extends ScreenAdapter {
 		if(playerIdle){
 			currentFrame = idleAnimation.getKeyFrames()[(int)playerIdleFrame];
 		}
+	}
 
+	private void drawScene(){
 		spriteBatch.begin();
-		spriteBatch.draw(gasStation, 0, 0, 768, 1024);
 		spriteBatch.draw(npcAnimation.getKeyFrame(stateTime, true), 496, 129, 128, 128);
 		spriteBatch.draw(currentFrame, playerX, playerY, 128, 128); // Draw player
 		spriteBatch.end();
-
-    }
-
-    @Override
-    public void hide() {
-        spriteBatch.dispose();
-		spriteSheet.dispose();
-    }
+	}
 }

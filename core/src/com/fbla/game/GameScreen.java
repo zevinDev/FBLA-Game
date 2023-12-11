@@ -17,6 +17,12 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.BatchTiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
+import com.badlogic.gdx.maps.tiled.TmxMapLoader;
+import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.maps.MapGroupLayer;
 
 
 public class GameScreen extends ScreenAdapter {
@@ -38,6 +44,10 @@ public class GameScreen extends ScreenAdapter {
 	private OrthographicCamera cam;
 	SpriteBatch spriteBatch;
 	TextureRegion currentFrame;
+    TiledMapRenderer tiledMapRenderer;
+    Texture img;
+    TiledMap tiledMap;
+    OrthographicCamera camera;
 
 	// A variable for tracking elapsed time for the animation
 	float stateTime;
@@ -108,6 +118,15 @@ public class GameScreen extends ScreenAdapter {
 		rightAnimation = new Animation<TextureRegion>(.25f, rightFrames);
 		idleAnimation = new Animation<TextureRegion>(.25f, idleFrames);
 
+        float w = Gdx.graphics.getWidth();
+        float h = Gdx.graphics.getHeight();
+
+        camera = new OrthographicCamera();
+        camera.setToOrtho(false,w,h);
+        camera.update();
+        tiledMap = new TmxMapLoader().load("Map01.tmx");
+        tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap, 8);
+
 		// Instantiate a SpriteBatch for drawing and reset the elapsed animation
 		// time to 0
 		spriteBatch = new SpriteBatch();
@@ -118,7 +137,10 @@ public class GameScreen extends ScreenAdapter {
 	// If code is innefiecent game will lag (for loop > if statement)
     @Override
     public void render(float delta) {
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT); // Clear screen
+        camera.position.set(playerX, playerY, 0);
+        camera.update();
+        tiledMapRenderer.setView(camera);
+        tiledMapRenderer.render(); // Clear screen
 		stateTime += Gdx.graphics.getDeltaTime(); // Accumulate elapsed animation time
 		cam.position.set(playerX, playerY, 0);	
 		cam.update();

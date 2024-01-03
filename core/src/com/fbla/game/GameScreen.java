@@ -1,6 +1,7 @@
 package com.fbla.game;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Application;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
@@ -8,12 +9,19 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
+import com.badlogic.gdx.maps.MapObjects;
+import com.badlogic.gdx.maps.objects.RectangleMapObject;
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
+import com.badlogic.gdx.maps.tiled.TmxMapLoader;
+import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.maps.MapGroupLayer;
 
 
 public class GameScreen extends ScreenAdapter {
-
     FBLA game;
-
 
 
 	// Objects used
@@ -32,12 +40,20 @@ public class GameScreen extends ScreenAdapter {
 	// Character X and Y coords
 	float playerX = 100;
 	float playerY = 100;
-	float playerSpeed = 150;
+	float playerSpeed = 300;
 	boolean playerIdle = true;
 	float playerIdleFrame = 0;
 
+	float lerp = 0.1f;
+
+	TiledMapRenderer tiledMapRenderer;
+    TiledMap tiledMap;
+    OrthographicCamera cam;
+
+
     public GameScreen(FBLA game) {
         this.game = game;
+		Gdx.app.setLogLevel(Application.LOG_DEBUG);
     }
 
 
@@ -85,6 +101,12 @@ public class GameScreen extends ScreenAdapter {
 
 		// Instantiate a SpriteBatch for drawing and reset the elapsed animation
 		// time to 0
+		cam = new OrthographicCamera(); 
+		cam.setToOrtho(false);
+		cam.position.set(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2, 0); 
+		cam.update(); // Updates the camera
+        tiledMap = new TmxMapLoader().load("new.tmx");
+        tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap, 8);
 		spriteBatch = new SpriteBatch();
 		stateTime = 0f;
     }
@@ -93,9 +115,8 @@ public class GameScreen extends ScreenAdapter {
 	// If code is innefiecent game will lag (for loop > if statement)
     @Override
     public void render(float delta) {
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT); // Clear screen
-		stateTime += Gdx.graphics.getDeltaTime(); // Accumulate elapsed animation time
 
+		stateTime += Gdx.graphics.getDeltaTime(); // Accumulate elapsed animation time
 		// Get player input
 		playerIdle = true;
 		if(Gdx.input.isKeyPressed(Keys.A)) {
@@ -104,19 +125,19 @@ public class GameScreen extends ScreenAdapter {
 			playerIdleFrame = 3;
 			currentFrame = leftAnimation.getKeyFrame(stateTime, true);
 		}
-	 	if(Gdx.input.isKeyPressed(Keys.D)) {
+	 	else if(Gdx.input.isKeyPressed(Keys.D)) {
 			playerX += Gdx.graphics.getDeltaTime() * (playerSpeed + 25);
 			playerIdle = false;
 			playerIdleFrame = 2;
 			currentFrame = rightAnimation.getKeyFrame(stateTime, true);
 		}
-		if(Gdx.input.isKeyPressed(Keys.W)) {
+		else if(Gdx.input.isKeyPressed(Keys.W)) {
 			playerY += Gdx.graphics.getDeltaTime() * playerSpeed;
 			playerIdle = false;
 			playerIdleFrame = 1;
 			currentFrame = upAnimation.getKeyFrame(stateTime, true);
 		}
-	 	if(Gdx.input.isKeyPressed(Keys.S)) {
+	 	else if(Gdx.input.isKeyPressed(Keys.S)) {
 			playerY -= Gdx.graphics.getDeltaTime() * playerSpeed;
 			playerIdle = false;
 			playerIdleFrame = 0;
@@ -127,9 +148,17 @@ public class GameScreen extends ScreenAdapter {
 			currentFrame = idleAnimation.getKeyFrames()[(int)playerIdleFrame];
 		}
 
+
+
+		cam.position.set(playerX, playerY, 0); // x and y could be changed by Keyboard input for example
+		cam.update(); // Don't forget me ;)
+        tiledMapRenderer.setView(cam);
+        tiledMapRenderer.render(); // Clear screen
+		spriteBatch.setProjectionMatrix(cam.combined); // Tells the spritebatch to render according to your camera
 		spriteBatch.begin();
-		spriteBatch.draw(currentFrame, playerX, playerY, 128, 128); // Draw player
+		spriteBatch.draw(currentFrame, (playerX - 64), (playerY - 64), 128, 128); // Draw player
 		spriteBatch.end();
+
 
     }
 

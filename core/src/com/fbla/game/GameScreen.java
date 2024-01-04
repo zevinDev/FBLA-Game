@@ -50,8 +50,8 @@ public class GameScreen extends ScreenAdapter {
     OrthographicCamera cam;
 	TiledMapTileLayer collisionLayer;
 	TiledMapTileLayer buildingsLayer;
-	int[] bottomLayers = {0};
-	int[] topLayers = {1};
+	TiledMapTileLayer accesoriesLayer;
+	int[] layerRenderOrder = {0, 1, 2};
 
     public GameScreen(FBLA game) {
         this.game = game;
@@ -63,17 +63,8 @@ public class GameScreen extends ScreenAdapter {
 		setupAnimations();
 		setupCamera();
 		setupTileMap();
-
-		spriteBatch = new SpriteBatch();
+		setupAudio();
 		stateTime = 0f;
-
-        //main menu music
-		Music music = Gdx.audio.newMusic(Gdx.files.internal("hometownOST.mp3"));
-		music.play();
-		music.setVolume(0.1f);
-
-		//Load step audio
-		 step = Gdx.audio.newMusic(Gdx.files.internal("shoesteplooped.mp3"));
     }
 
     @Override
@@ -103,16 +94,31 @@ public class GameScreen extends ScreenAdapter {
 			}
     }
 	private void handleCollision(){
-		if(checkCollision(playerX, playerY) == "blocked"){
+		if(checkCollision(playerX, playerY, collisionLayer) == "blocked"){
 			playerY = oldY;
 			playerX = oldX;
+			spriteBatch.setColor(1,1,1,1f);
 			buildingsLayer.setOpacity(1f);
 			renderScene(oldX, oldY);
-		}else if(checkCollision(playerX, playerY) == "opaque"){
+		}else if(checkCollision(playerX, playerY, collisionLayer) == "opaque"){
 			buildingsLayer.setOpacity(.25f);
+			accesoriesLayer.setOpacity(.25f);
+			spriteBatch.setColor(1,1,1,.75f);
+			renderScene(playerX, playerY);
+		} else if(checkCollision(playerX, playerY, accesoriesLayer) == "blocked"){
+			playerY = oldY;
+			playerX = oldX;
+			spriteBatch.setColor(1,1,1,1f);
+			accesoriesLayer.setOpacity(1f);
+			renderScene(playerX, playerY);
+		} else if(checkCollision(playerX, playerY, accesoriesLayer) == "opaque"){
+			accesoriesLayer.setOpacity(.25f);
+			spriteBatch.setColor(1,1,1,.75f);
 			renderScene(playerX, playerY);
 		}else {
 			buildingsLayer.setOpacity(1f);
+			accesoriesLayer.setOpacity(1f);
+			spriteBatch.setColor(1,1,1,1f);
 			renderScene(playerX, playerY);
 		}
 	}
@@ -121,25 +127,23 @@ public class GameScreen extends ScreenAdapter {
 		cam.position.set(playX, playY, 0);
 		cam.update();
 		tiledMapRenderer.setView(cam);
-		tiledMapRenderer.render(bottomLayers);
+		tiledMapRenderer.render(layerRenderOrder);
 		spriteBatch.setProjectionMatrix(cam.combined);
 		spriteBatch.begin();
 		spriteBatch.draw(currentFrame, (playX - 64), (playY - 64), 128, 128);
 		spriteBatch.end();
-		tiledMapRenderer.render(topLayers);
-
 	}
 
-	private String checkCollision(float x, float y) {
+	private String checkCollision(float x, float y, TiledMapTileLayer layer) {
 		Cell topRightCell = null;
 		Cell topLeftCell = null;
 		Cell bottomLeftCell = null;
 		Cell bottomRightCell = null;
 	
-		topRightCell = collisionLayer.getCell((int) ((x+64) / 128), (int) (y / 128));
-		topLeftCell = collisionLayer.getCell((int) ((x-64) / 128), (int) (y / 128));
-		bottomLeftCell = collisionLayer.getCell((int) ((x-64) / 128), (int) ((y-64) / 128));
-		bottomRightCell = collisionLayer.getCell((int) ((x+64) / 128), (int) ((y-64) / 128));
+		topRightCell = layer.getCell((int) ((x+32) / 128), (int) (y / 128));
+		topLeftCell = layer.getCell((int) ((x-32) / 128), (int) (y / 128));
+		bottomLeftCell = layer.getCell((int) ((x-32) / 128), (int) (y / 128));
+		bottomRightCell = layer.getCell((int) ((x+32) / 128), (int) (y / 128));
 
 		return checkCellCollision(topRightCell, topLeftCell, bottomLeftCell, bottomRightCell);
 	}
@@ -239,6 +243,8 @@ public class GameScreen extends ScreenAdapter {
 		leftAnimation = new Animation<TextureRegion>(.2f, leftFrames);
 		rightAnimation = new Animation<TextureRegion>(.2f, rightFrames);
 		idleAnimation = new Animation<TextureRegion>(.2f, idleFrames);
+
+		spriteBatch = new SpriteBatch();
 	}
 
 	private void setupCamera(){
@@ -253,5 +259,16 @@ public class GameScreen extends ScreenAdapter {
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap, 8);
 		collisionLayer = (TiledMapTileLayer)tiledMap.getLayers().get("Collision");
 		buildingsLayer = (TiledMapTileLayer)tiledMap.getLayers().get("Buildings");
+		accesoriesLayer = (TiledMapTileLayer)tiledMap.getLayers().get("Accesories");
+	}
+
+	private void setupAudio(){
+		//main menu music
+		Music music = Gdx.audio.newMusic(Gdx.files.internal("hometownOST.mp3"));
+		music.play();
+		music.setVolume(0.1f);
+
+		//Load step audio
+		step = Gdx.audio.newMusic(Gdx.files.internal("shoesteplooped.mp3"));
 	}
 }

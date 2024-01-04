@@ -15,6 +15,8 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 
 public class GameScreen extends ScreenAdapter {
     FBLA game;
@@ -37,6 +39,11 @@ public class GameScreen extends ScreenAdapter {
 	float playerSpeed = 300;
 	float playerIdleFrame = 0;
 
+//Variable for step audio
+	String bip = "shoestep.mp3";
+	Music step;
+	boolean stepPlaying;
+	long id;
 
 	TiledMapRenderer tiledMapRenderer;
     TiledMap tiledMap;
@@ -59,6 +66,14 @@ public class GameScreen extends ScreenAdapter {
 
 		spriteBatch = new SpriteBatch();
 		stateTime = 0f;
+
+        //main menu music
+		Music music = Gdx.audio.newMusic(Gdx.files.internal("hometownOST.mp3"));
+		music.play();
+		music.setVolume(0.1f);
+
+		//Load step audio
+		 step = Gdx.audio.newMusic(Gdx.files.internal("shoesteplooped.mp3"));
     }
 
     @Override
@@ -66,6 +81,7 @@ public class GameScreen extends ScreenAdapter {
 		stateTime += Gdx.graphics.getDeltaTime();
 		playerMovement();
 		handleCollision();
+        handleAudio();
     }
 
     @Override
@@ -74,6 +90,18 @@ public class GameScreen extends ScreenAdapter {
 		spriteSheet.dispose();
     }
 
+    private void handleAudio() {
+        
+		// Player Steps sound
+			if ((currentFrame != idleAnimation.getKeyFrames()[(int)playerIdleFrame]) && !stepPlaying) {
+				step.play();
+				step.setVolume(0.025f);
+				stepPlaying = true;
+			} else if (currentFrame == idleAnimation.getKeyFrames()[(int)playerIdleFrame]) {
+				step.stop();
+				stepPlaying = false;
+			}
+    }
 	private void handleCollision(){
 		if(checkCollision(playerX, playerY) == "blocked"){
 			playerY = oldY;
@@ -132,7 +160,32 @@ public class GameScreen extends ScreenAdapter {
 	private void playerMovement(){
 		oldX = playerX;
 		oldY = playerY;
-		if(Gdx.input.isKeyPressed(Keys.A)) {
+		// Get player input
+		if(Gdx.input.isKeyPressed(Keys.W) && Gdx.input.isKeyPressed(Keys.D)) {
+			playerY += Gdx.graphics.getDeltaTime() * playerSpeed;
+			playerX += Gdx.graphics.getDeltaTime() * (playerSpeed + 25)/1.5;
+			playerIdleFrame = 1;
+			currentFrame = upAnimation.getKeyFrame(stateTime, true);
+		}
+	 	else if(Gdx.input.isKeyPressed(Keys.W) && Gdx.input.isKeyPressed(Keys.A)) {
+			playerY += Gdx.graphics.getDeltaTime() * playerSpeed;
+			playerX -= Gdx.graphics.getDeltaTime() * (playerSpeed + 25)/1.5;
+			playerIdleFrame = 1;
+			currentFrame = upAnimation.getKeyFrame(stateTime, true);
+		}
+	 	else if(Gdx.input.isKeyPressed(Keys.S) && Gdx.input.isKeyPressed(Keys.D)) {
+			playerY -= Gdx.graphics.getDeltaTime() * playerSpeed;
+			playerX += Gdx.graphics.getDeltaTime() * (playerSpeed + 25)/1.5;
+			playerIdleFrame = 0;
+			currentFrame = downAnimation.getKeyFrame(stateTime, true);
+		}
+	 	else if(Gdx.input.isKeyPressed(Keys.S) && Gdx.input.isKeyPressed(Keys.A)) {
+			playerY -= Gdx.graphics.getDeltaTime() * playerSpeed;
+			playerX -= Gdx.graphics.getDeltaTime() * (playerSpeed + 25)/1.5;
+			playerIdleFrame = 0;
+			currentFrame = downAnimation.getKeyFrame(stateTime, true);
+		}
+	 	else if(Gdx.input.isKeyPressed(Keys.A)) {
 			playerX -= Gdx.graphics.getDeltaTime() * (playerSpeed + 25);
 			playerIdleFrame = 3;
 			currentFrame = leftAnimation.getKeyFrame(stateTime, true);
@@ -181,11 +234,11 @@ public class GameScreen extends ScreenAdapter {
 		idleFrames[2] = tmp[2][0];
 		idleFrames[3] = tmp[2][2];
 
-		downAnimation = new Animation<TextureRegion>(.25f, downFrames);
-		upAnimation = new Animation<TextureRegion>(.25f, upFrames);
-		leftAnimation = new Animation<TextureRegion>(.25f, leftFrames);
-		rightAnimation = new Animation<TextureRegion>(.25f, rightFrames);
-		idleAnimation = new Animation<TextureRegion>(.25f, idleFrames);
+		downAnimation = new Animation<TextureRegion>(.2f, downFrames);
+		upAnimation = new Animation<TextureRegion>(.2f, upFrames);
+		leftAnimation = new Animation<TextureRegion>(.2f, leftFrames);
+		rightAnimation = new Animation<TextureRegion>(.2f, rightFrames);
+		idleAnimation = new Animation<TextureRegion>(.2f, idleFrames);
 	}
 
 	private void setupCamera(){

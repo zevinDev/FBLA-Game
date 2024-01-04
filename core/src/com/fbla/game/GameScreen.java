@@ -1,6 +1,11 @@
 package com.fbla.game;
 
 import com.badlogic.gdx.Gdx;
+
+import java.io.File;
+
+import javax.print.attribute.standard.Media;
+
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.GL20;
@@ -18,7 +23,8 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.maps.MapGroupLayer;
-
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 
 public class GameScreen extends ScreenAdapter {
     FBLA game;
@@ -33,6 +39,12 @@ public class GameScreen extends ScreenAdapter {
 	Texture spriteSheet;
 	SpriteBatch spriteBatch;
 	TextureRegion currentFrame;
+
+	//Variable for step audio
+	String bip = "shoestep.mp3";
+	Music step;
+	boolean stepPlaying;
+	long id;
 
 	// A variable for tracking elapsed time for the animation
 	float stateTime;
@@ -59,6 +71,7 @@ public class GameScreen extends ScreenAdapter {
 
     @Override
     public void show() {
+		
         // Load the sprite sheet as a Texture
 		spriteSheet = new Texture(Gdx.files.internal("zevin.png"));
 
@@ -93,11 +106,11 @@ public class GameScreen extends ScreenAdapter {
 
 
 		// Initialize the Animation with the frame interval and array of frames
-		downAnimation = new Animation<TextureRegion>(.25f, downFrames);
-		upAnimation = new Animation<TextureRegion>(.25f, upFrames);
-		leftAnimation = new Animation<TextureRegion>(.25f, leftFrames);
-		rightAnimation = new Animation<TextureRegion>(.25f, rightFrames);
-		idleAnimation = new Animation<TextureRegion>(.25f, idleFrames);
+		downAnimation = new Animation<TextureRegion>(.2f, downFrames);
+		upAnimation = new Animation<TextureRegion>(.2f, upFrames);
+		leftAnimation = new Animation<TextureRegion>(.2f, leftFrames);
+		rightAnimation = new Animation<TextureRegion>(.2f, rightFrames);
+		idleAnimation = new Animation<TextureRegion>(.2f, idleFrames);
 
 		// Instantiate a SpriteBatch for drawing and reset the elapsed animation
 		// time to 0
@@ -109,6 +122,18 @@ public class GameScreen extends ScreenAdapter {
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap, 8);
 		spriteBatch = new SpriteBatch();
 		stateTime = 0f;
+		
+		//main menu music
+		Music music = Gdx.audio.newMusic(Gdx.files.internal("hometownOST.mp3"));
+		music.play();
+		music.setVolume(0.1f);
+
+		
+		// Load step audio
+		 step = Gdx.audio.newMusic(Gdx.files.internal("shoesteplooped.mp3"));
+
+
+		
     }
 
 	// This method runs for every frame
@@ -116,10 +141,40 @@ public class GameScreen extends ScreenAdapter {
     @Override
     public void render(float delta) {
 
+		
 		stateTime += Gdx.graphics.getDeltaTime(); // Accumulate elapsed animation time
+
 		// Get player input
 		playerIdle = true;
-		if(Gdx.input.isKeyPressed(Keys.A)) {
+		if(Gdx.input.isKeyPressed(Keys.W) && Gdx.input.isKeyPressed(Keys.D)) {
+			playerY += Gdx.graphics.getDeltaTime() * playerSpeed;
+			playerX += Gdx.graphics.getDeltaTime() * (playerSpeed + 25)/1.5;
+			playerIdle = false;
+			playerIdleFrame = 1;
+			currentFrame = upAnimation.getKeyFrame(stateTime, true);
+		}
+	 	else if(Gdx.input.isKeyPressed(Keys.W) && Gdx.input.isKeyPressed(Keys.A)) {
+			playerY += Gdx.graphics.getDeltaTime() * playerSpeed;
+			playerX -= Gdx.graphics.getDeltaTime() * (playerSpeed + 25)/1.5;
+			playerIdle = false;
+			playerIdleFrame = 1;
+			currentFrame = upAnimation.getKeyFrame(stateTime, true);
+		}
+	 	else if(Gdx.input.isKeyPressed(Keys.S) && Gdx.input.isKeyPressed(Keys.D)) {
+			playerY -= Gdx.graphics.getDeltaTime() * playerSpeed;
+			playerX += Gdx.graphics.getDeltaTime() * (playerSpeed + 25)/1.5;
+			playerIdle = false;
+			playerIdleFrame = 0;
+			currentFrame = downAnimation.getKeyFrame(stateTime, true);
+		}
+	 	else if(Gdx.input.isKeyPressed(Keys.S) && Gdx.input.isKeyPressed(Keys.A)) {
+			playerY -= Gdx.graphics.getDeltaTime() * playerSpeed;
+			playerX -= Gdx.graphics.getDeltaTime() * (playerSpeed + 25)/1.5;
+			playerIdle = false;
+			playerIdleFrame = 0;
+			currentFrame = downAnimation.getKeyFrame(stateTime, true);
+		}
+	 	else if(Gdx.input.isKeyPressed(Keys.A)) {
 			playerX -= Gdx.graphics.getDeltaTime() * (playerSpeed + 25);
 			playerIdle = false;
 			playerIdleFrame = 3;
@@ -159,6 +214,16 @@ public class GameScreen extends ScreenAdapter {
 		spriteBatch.draw(currentFrame, (playerX - 64), (playerY - 64), 128, 128); // Draw player
 		spriteBatch.end();
 
+		// Player Steps sound
+			if (!playerIdle && !stepPlaying) {
+				step.play();
+				step.setVolume(0.025f);
+				stepPlaying = true;
+			} else if (playerIdle) {
+				step.stop();
+				stepPlaying = false;
+			}
+		
 
     }
 

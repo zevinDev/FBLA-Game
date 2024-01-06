@@ -3,17 +3,20 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "new.tmx",
+    "activeFile": "map.tmx",
     "expandedProjectPaths": [
         "."
     ],
     "fileStates": {
+        "": {
+            "scaleInEditor": 1
+        },
         "map.tmx": {
-            "scale": 3,
-            "selectedLayer": 1,
+            "scale": 4,
+            "selectedLayer": 2,
             "viewCenter": {
-                "x": 313.3333333333333,
-                "y": 99.66666666666664
+                "x": 258.5,
+                "y": 142.25
             }
         },
         "map.tmx#Accesorie": {
@@ -21,6 +24,7 @@
             "scaleInEditor": 1
         },
         "map.tmx#Accesories": {
+            "scaleInDock": 4,
             "scaleInEditor": 1
         },
         "map.tmx#Building": {
@@ -53,7 +57,7 @@
     "map.tileHeight": 16,
     "map.tileWidth": 16,
     "openFiles": [
-        "new.tmx"
+        "map.tmx"
     ],
     "project": "FBLA-Game.tiled-project",
     "property.type": "bool",

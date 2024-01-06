@@ -71,14 +71,7 @@ public class GameScreen extends ScreenAdapter {
 		stateTime = 0f;
 
 
-        //main menu music
-		Music music = Gdx.audio.newMusic(Gdx.files.internal("hometownOST.mp3"));
-		music.setLooping(true);
-		music.play();
-		music.setVolume(0.1f);
-
-		//Load step audio
-		 step = Gdx.audio.newSound(Gdx.files.internal("shoestep.wav"));
+        
 
     }
 
@@ -286,10 +279,11 @@ public class GameScreen extends ScreenAdapter {
 	private void setupAudio(){
 		//main menu music
 		Music music = Gdx.audio.newMusic(Gdx.files.internal("hometownOST.mp3"));
+		music.setLooping(true);
 		music.play();
 		music.setVolume(0.1f);
 
 		//Load step audio
-		step = Gdx.audio.newMusic(Gdx.files.internal("shoesteplooped.mp3"));
+		 step = Gdx.audio.newSound(Gdx.files.internal("shoestep.wav"));
 	}
 }

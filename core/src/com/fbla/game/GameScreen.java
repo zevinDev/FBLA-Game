@@ -40,8 +40,7 @@ public class GameScreen extends ScreenAdapter {
 	float playerIdleFrame = 0;
 
 //Variable for step audio
-	String bip = "shoestep.mp3";
-	Music step;
+	Sound step;
 	boolean stepPlaying;
 	long id;
 
@@ -65,6 +64,17 @@ public class GameScreen extends ScreenAdapter {
 		setupTileMap();
 		setupAudio();
 		stateTime = 0f;
+
+
+        //main menu music
+		Music music = Gdx.audio.newMusic(Gdx.files.internal("hometownOST.mp3"));
+		music.setLooping(true);
+		music.play();
+		music.setVolume(0.1f);
+
+		//Load step audio
+		 step = Gdx.audio.newSound(Gdx.files.internal("shoestep.wav"));
+
     }
 
     @Override
@@ -85,9 +95,8 @@ public class GameScreen extends ScreenAdapter {
         
 		// Player Steps sound
 			if ((currentFrame != idleAnimation.getKeyFrames()[(int)playerIdleFrame]) && !stepPlaying) {
-				step.play();
-				step.setVolume(0.025f);
-				stepPlaying = true;
+				step.setLooping(step.play(0.025f), true);
+				stepPlaying = true;	
 			} else if (currentFrame == idleAnimation.getKeyFrames()[(int)playerIdleFrame]) {
 				step.stop();
 				stepPlaying = false;

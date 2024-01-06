@@ -13,10 +13,10 @@
         },
         "map.tmx": {
             "scale": 4,
-            "selectedLayer": 2,
+            "selectedLayer": 4,
             "viewCenter": {
-                "x": 258.5,
-                "y": 142.25
+                "x": 235.75,
+                "y": 166.25
             }
         },
         "map.tmx#Accesorie": {
@@ -24,7 +24,7 @@
             "scaleInEditor": 1
         },
         "map.tmx#Accesories": {
-            "scaleInDock": 4,
+            "scaleInDock": 2,
             "scaleInEditor": 1
         },
         "map.tmx#Building": {

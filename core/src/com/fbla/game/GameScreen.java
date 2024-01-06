@@ -17,6 +17,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
+import java.util.ArrayList;
 
 public class GameScreen extends ScreenAdapter {
     FBLA game;
@@ -48,9 +49,13 @@ public class GameScreen extends ScreenAdapter {
     TiledMap tiledMap;
     OrthographicCamera cam;
 	TiledMapTileLayer collisionLayer;
+	TiledMapTileLayer collisionAccessoriesLayer;
 	TiledMapTileLayer buildingsLayer;
-	TiledMapTileLayer accesoriesLayer;
-	int[] layerRenderOrder = {0, 1, 2};
+	TiledMapTileLayer buildingAccessoriesLayer;
+	TiledMapTileLayer roadsLayer;
+	TiledMapTileLayer roadAccessoriesLayer;
+	
+	int[] layerRenderOrder = {0, 1, 2, 3, 5};
 
     public GameScreen(FBLA game) {
         this.game = game;
@@ -66,14 +71,7 @@ public class GameScreen extends ScreenAdapter {
 		stateTime = 0f;
 
 
-        //main menu music
-		Music music = Gdx.audio.newMusic(Gdx.files.internal("hometownOST.mp3"));
-		music.setLooping(true);
-		music.play();
-		music.setVolume(0.1f);
-
-		//Load step audio
-		 step = Gdx.audio.newSound(Gdx.files.internal("shoestep.wav"));
+        
 
     }
 
@@ -103,33 +101,28 @@ public class GameScreen extends ScreenAdapter {
 			}
     }
 	private void handleCollision(){
-		if(checkCollision(playerX, playerY, collisionLayer) == "blocked"){
+		String buildingCollision = checkCollision(playerX, playerY, collisionLayer);
+		String accessoriesCollision = checkCollision(playerX, playerY, collisionAccessoriesLayer);
+		if(buildingCollision == "blocked"){
 			playerY = oldY;
 			playerX = oldX;
-			spriteBatch.setColor(1,1,1,1f);
-			buildingsLayer.setOpacity(1f);
-			renderScene(oldX, oldY);
-		}else if(checkCollision(playerX, playerY, collisionLayer) == "opaque"){
+		}else if(buildingCollision == "opaque"){
 			buildingsLayer.setOpacity(.25f);
-			accesoriesLayer.setOpacity(.25f);
+			buildingAccessoriesLayer.setOpacity(.25f);
 			spriteBatch.setColor(1,1,1,.75f);
-			renderScene(playerX, playerY);
-		} else if(checkCollision(playerX, playerY, accesoriesLayer) == "blocked"){
+		} else if(accessoriesCollision == "blocked"){
 			playerY = oldY;
 			playerX = oldX;
-			spriteBatch.setColor(1,1,1,1f);
-			accesoriesLayer.setOpacity(1f);
-			renderScene(playerX, playerY);
-		} else if(checkCollision(playerX, playerY, accesoriesLayer) == "opaque"){
-			accesoriesLayer.setOpacity(.25f);
+		} else if(accessoriesCollision == "opaque"){
+			collisionAccessoriesLayer.setOpacity(.25f);
 			spriteBatch.setColor(1,1,1,.75f);
-			renderScene(playerX, playerY);
 		}else {
 			buildingsLayer.setOpacity(1f);
-			accesoriesLayer.setOpacity(1f);
+			buildingAccessoriesLayer.setOpacity(1f);
+			collisionAccessoriesLayer.setOpacity(1f);
 			spriteBatch.setColor(1,1,1,1f);
-			renderScene(playerX, playerY);
 		}
+		renderScene(playerX, playerY);
 	}
 
 	private void renderScene(float playX, float playY){
@@ -151,23 +144,31 @@ public class GameScreen extends ScreenAdapter {
 	
 		topRightCell = layer.getCell((int) ((x+32) / 128), (int) (y / 128));
 		topLeftCell = layer.getCell((int) ((x-32) / 128), (int) (y / 128));
-		bottomLeftCell = layer.getCell((int) ((x-32) / 128), (int) (y / 128));
-		bottomRightCell = layer.getCell((int) ((x+32) / 128), (int) (y / 128));
+		bottomLeftCell = layer.getCell((int) ((x-32) / 128), (int) ((y-56) / 128));
+		bottomRightCell = layer.getCell((int) ((x+32) / 128), (int) ((y-56) / 128));
 
 		return checkCellCollision(topRightCell, topLeftCell, bottomLeftCell, bottomRightCell);
 	}
 
 	private String checkCellCollision(Cell... cells){
+		ArrayList<String> collisionOutput = new ArrayList<String>();
 		for(Cell cell : cells){
 			if (cell != null && cell.getTile() != null) {
 				if (cell.getTile().getProperties().containsKey("blocked")) {
-					return "blocked";
+					collisionOutput.add("blocked");
 				} else if (cell.getTile().getProperties().containsKey("opaque")) {
-					return "opaque";
+					collisionOutput.add("opaque");
 				}
 			}
 		}
-		return "nothing";
+		if(collisionOutput.size() > 0){
+			if(collisionOutput.contains("blocked")){
+				return "blocked";
+			} else if(collisionOutput.contains("opaque")){
+				return "opaque";
+			}
+		}
+		return null;
 	}
 
 	private void playerMovement(){
@@ -266,18 +267,23 @@ public class GameScreen extends ScreenAdapter {
 	private void setupTileMap(){
         tiledMap = new TmxMapLoader().load("map.tmx");
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap, 8);
+
 		collisionLayer = (TiledMapTileLayer)tiledMap.getLayers().get("Collision");
+		collisionAccessoriesLayer = (TiledMapTileLayer)tiledMap.getLayers().get("CollisionAccesories");
 		buildingsLayer = (TiledMapTileLayer)tiledMap.getLayers().get("Buildings");
-		accesoriesLayer = (TiledMapTileLayer)tiledMap.getLayers().get("Accesories");
+		buildingAccessoriesLayer = (TiledMapTileLayer)tiledMap.getLayers().get("BuildingAccesories");
+		roadsLayer = (TiledMapTileLayer)tiledMap.getLayers().get("Roads");
+		roadAccessoriesLayer = (TiledMapTileLayer)tiledMap.getLayers().get("RoadAccesories");
 	}
 
 	private void setupAudio(){
 		//main menu music
 		Music music = Gdx.audio.newMusic(Gdx.files.internal("hometownOST.mp3"));
+		music.setLooping(true);
 		music.play();
 		music.setVolume(0.1f);
 
 		//Load step audio
-		step = Gdx.audio.newMusic(Gdx.files.internal("shoesteplooped.mp3"));
+		 step = Gdx.audio.newSound(Gdx.files.internal("shoestep.wav"));
 	}
 }

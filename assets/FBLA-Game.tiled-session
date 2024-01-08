@@ -12,11 +12,11 @@
             "scaleInEditor": 1
         },
         "map.tmx": {
-            "scale": 4,
-            "selectedLayer": 4,
+            "scale": 1.5,
+            "selectedLayer": 6,
             "viewCenter": {
-                "x": 235.75,
-                "y": 166.25
+                "x": 131.33333333333331,
+                "y": 49.33333333333337
             }
         },
         "map.tmx#Accesorie": {
@@ -28,7 +28,8 @@
             "scaleInEditor": 1
         },
         "map.tmx#Building": {
-            "scaleInDock": 2
+            "scaleInDock": 2,
+            "scaleInEditor": 1
         },
         "map.tmx#Road": {
             "scaleInDock": 4
@@ -49,6 +50,17 @@
         },
         "new.tmx#doors": {
             "scaleInDock": 1
+        },
+        "untitled.tmx": {
+            "scale": 1.5,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 95.33333333333331,
+                "y": 62.666666666666686
+            }
+        },
+        "untitled.tmx#test": {
+            "scaleInDock": 1
         }
     },
     "last.imagePath": "D:/Projects/FBLA-Game/assets",
@@ -62,6 +74,7 @@
     "project": "FBLA-Game.tiled-project",
     "property.type": "bool",
     "recentFiles": [
+        "untitled.tmx",
         "map.tmx",
         "new.tmx"
     ],

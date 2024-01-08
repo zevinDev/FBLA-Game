@@ -2,6 +2,7 @@ package com.fbla.game;
 
 import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
+import com.badlogic.gdx.maps.MapLayer;
 
 public class Scene {
 
@@ -9,9 +10,9 @@ public class Scene {
   private float X;
   private float Y;
   private TiledMapRenderer mapRenderer;
-  private TiledMapTileLayer[] layers;
+  private MapLayer collisionLayer;
 
-  public Scene(String name, float X, float Y, float startX, float startY, TiledMapRenderer mapRenderer, TiledMapTileLayer[] layers) {
+  public Scene(String name, float X, float Y, float startX, float startY, TiledMapRenderer mapRenderer, MapLayer collisionLayer) {
     this.name = name;
     if (X == -1 || Y == -1) {
       this.X = startX;
@@ -21,7 +22,7 @@ public class Scene {
       this.Y = Y;
     }
     this.mapRenderer = mapRenderer;
-    this.layers = layers;
+    this.collisionLayer = collisionLayer;
   }
 
   public float getX() {
@@ -32,11 +33,8 @@ public class Scene {
     return Y;
   }
 
-  public void setX(float X) {
+  public void setPosition(float X, float Y) {
     this.X = X;
-  }
-
-  public void setY(float Y) {
     this.Y = Y;
   }
 
@@ -44,7 +42,7 @@ public class Scene {
     return mapRenderer;
   }
 
-  public TiledMapTileLayer[] getLayers() {
-    return layers;
+  public MapLayer getCollisionLayer() {
+    return collisionLayer;
   }
 }

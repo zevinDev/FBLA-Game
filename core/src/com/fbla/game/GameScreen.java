@@ -18,10 +18,24 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import java.util.ArrayList;
+import com.badlogic.gdx.maps.MapObjects;
+import com.badlogic.gdx.maps.objects.RectangleMapObject;
+import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Intersector;
+import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.maps.MapLayer;
+import com.badlogic.gdx.maps.objects.EllipseMapObject;
+import com.badlogic.gdx.math.Ellipse;
+import com.badlogic.gdx.maps.objects.PolygonMapObject;
+import com.badlogic.gdx.math.Polygon;
+import com.badlogic.gdx.math.Circle;
+import com.badlogic.gdx.maps.MapObject;
+
 
 public class GameScreen extends ScreenAdapter {
   FBLA game;
 
+  Sprite player;
   Texture spriteSheet;
   SpriteBatch spriteBatch;
   Animation < TextureRegion > downAnimation;
@@ -42,8 +56,9 @@ public class GameScreen extends ScreenAdapter {
 
   float stateTime;
 
-  Scene currentScene;
   Scene mainScene;
+  Scene currentScene;
+
 
   public GameScreen(FBLA game) {
     this.game = game;
@@ -76,6 +91,7 @@ public class GameScreen extends ScreenAdapter {
 
   private void setupAnimations() {
     spriteSheet = new Texture(Gdx.files.internal("zevin.png"));
+    player = new Sprite(spriteSheet, 0, 0, 16, 8);
     TextureRegion[][] tmp = TextureRegion.split(spriteSheet, 16, 16);
     TextureRegion[] downFrames = new TextureRegion[2];
     downFrames[0] = tmp[0][1];
@@ -93,7 +109,7 @@ public class GameScreen extends ScreenAdapter {
     rightFrames[0] = tmp[2][0];
     rightFrames[1] = tmp[2][1];
 
-    TextureRegion[] idleFrames = new TextureRegion[1];
+    TextureRegion[] idleFrames = new TextureRegion[4];
     idleFrames[0] = tmp[0][0];
     idleFrames[1] = tmp[1][0];
     idleFrames[2] = tmp[2][0];
@@ -118,13 +134,8 @@ public class GameScreen extends ScreenAdapter {
   private void setupMainScene() {
     TiledMap tiledMap = new TmxMapLoader().load("map.tmx");
     TiledMapRenderer tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap, 8);
-
-    TiledMapTileLayer mainLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Main");
-    TiledMapTileLayer mainAccessoriesLayer = (TiledMapTileLayer) tiledMap.getLayers().get("MainAccessories");
-    TiledMapTileLayer mainCollisionLayer = (TiledMapTileLayer) tiledMap.getLayers().get("MainCollision");
-    TiledMapTileLayer accessoriesCollisionLayer = (TiledMapTileLayer) tiledMap.getLayers().get("AccessoriesCollision");
-
-    mainScene = new Scene("main", -1, -1, 100, 100, tiledMapRenderer, new TiledMapTileLayer[] {mainLayer, mainAccessoriesLayer, mainCollisionLayer, accessoriesCollisionLayer});
+    MapLayer collisionObjectLayer = tiledMap.getLayers().get("Collision");
+    mainScene = new Scene("main", -1, -1, 100, 100, tiledMapRenderer, collisionObjectLayer);
   }
 
   private void setupAudio() {
@@ -179,36 +190,17 @@ public class GameScreen extends ScreenAdapter {
     } else {
       currentFrame = idleAnimation.getKeyFrames()[(int) playerIdleFrame];
     }
+    player.setPosition((playerX-70)/8, (playerY-70)/8);
   }
 
   private void handleCollision() {
-    TiledMapTileLayer[] layers = currentScene.getLayers();
-    TiledMapTileLayer mainLayer = layers[0];
-    TiledMapTileLayer mainAccessoriesLayer = layers[1];
-    TiledMapTileLayer mainCollisionLayer = layers[2];
-    TiledMapTileLayer accessoriesCollisionLayer = layers[3];
     float oldX = currentScene.getX();
     float oldY = currentScene.getY();
-    String mainCollision = checkCollision(playerX, playerY, mainCollisionLayer);
-    String accessoriesCollision = checkCollision(playerX, playerY, accessoriesCollisionLayer);
-    if (mainCollision == "blocked") {
+    MapLayer collisionObjectLayer = currentScene.getCollisionLayer();
+    boolean mainCollision = checkCollision(collisionObjectLayer);
+    if (mainCollision) {
       playerY = oldY;
       playerX = oldX;
-    } else if (mainCollision == "opaque") {
-      mainLayer.setOpacity(.25f);
-      mainAccessoriesLayer.setOpacity(.25f);
-      spriteBatch.setColor(1, 1, 1, .75f);
-    } else if (accessoriesCollision == "blocked") {
-      playerY = oldY;
-      playerX = oldX;
-    } else if (accessoriesCollision == "opaque") {
-      accessoriesCollisionLayer.setOpacity(.25f);
-      spriteBatch.setColor(1, 1, 1, .75f);
-    } else {
-      mainLayer.setOpacity(1f);
-      mainAccessoriesLayer.setOpacity(1f);
-      accessoriesCollisionLayer.setOpacity(1f);
-      spriteBatch.setColor(1, 1, 1, 1f);
     }
     renderScene(playerX, playerY);
   }
@@ -223,52 +215,52 @@ public class GameScreen extends ScreenAdapter {
     }
   }
 
-  private String checkCollision(float x, float y, TiledMapTileLayer layer) {
-    Cell topRightCell = null;
-    Cell topLeftCell = null;
-    Cell bottomLeftCell = null;
-    Cell bottomRightCell = null;
+  private boolean checkCollision(MapLayer layer) {
+    MapLayer collisionObjectLayer = currentScene.getCollisionLayer();
+    MapObjects objects = collisionObjectLayer.getObjects();
+    for (int i = 0; i < objects.getCount(); i++)
+    {
+        MapObject mapObject = objects.get(i);
 
-    topRightCell = layer.getCell((int)((x + 32) / 128), (int)(y / 128));
-    topLeftCell = layer.getCell((int)((x - 32) / 128), (int)(y / 128));
-    bottomLeftCell = layer.getCell((int)((x - 32) / 128), (int)((y - 56) / 128));
-    bottomRightCell = layer.getCell((int)((x + 32) / 128), (int)((y - 56) / 128));
-
-    return checkCellCollision(topRightCell, topLeftCell, bottomLeftCell, bottomRightCell);
-  }
-
-  private String checkCellCollision(Cell...cells) {
-    ArrayList < String > collisionOutput = new ArrayList < String > ();
-    for (Cell cell: cells) {
-      if (cell != null && cell.getTile() != null) {
-        if (cell.getTile().getProperties().containsKey("blocked")) {
-          collisionOutput.add("blocked");
-        } else if (cell.getTile().getProperties().containsKey("opaque")) {
-          collisionOutput.add("opaque");
+        if (mapObject instanceof RectangleMapObject)
+        {
+            RectangleMapObject rectangleObject = (RectangleMapObject) mapObject;
+            Rectangle rectangle = rectangleObject.getRectangle();
+            if (Intersector.overlaps(rectangle, player.getBoundingRectangle())) {
+              return true;
+           }
+            
         }
-      }
+        else if (mapObject instanceof EllipseMapObject)
+        {
+            EllipseMapObject circleMapObject = (EllipseMapObject) mapObject;
+            Ellipse ellipse = circleMapObject.getEllipse();
+
+
+            if (ellipse.width != ellipse.height)
+                throw new IllegalArgumentException("Only circles are allowed.");
+
+            Circle circle = new Circle(ellipse.x + ellipse.width / 2, ellipse.y + ellipse.height / 2, ellipse.width / 2);
+            if(Intersector.overlaps(circle, player.getBoundingRectangle())) {
+              return true;
+            }
+        }
     }
-    if (collisionOutput.size() > 0) {
-      if (collisionOutput.contains("blocked")) {
-        return "blocked";
-      } else if (collisionOutput.contains("opaque")) {
-        return "opaque";
-      }
-    }
-    return null;
+    return false;
   }
+  
 
   private void renderScene(float playX, float playY) {
     TiledMapRenderer tiledMapRenderer = currentScene.getMapRenderer();
-    currentScene.setX(playX);
-    currentScene.setY(playY);
+    currentScene.setPosition(playX, playY);
     cam.position.set(playX, playY, 0);
     cam.update();
     tiledMapRenderer.setView(cam);
-    tiledMapRenderer.render(new int[] {0,1,2,3,5});
+    tiledMapRenderer.render(new int[] {0,1,2});
     spriteBatch.setProjectionMatrix(cam.combined);
     spriteBatch.begin();
     spriteBatch.draw(currentFrame, (playX - 64), (playY - 64), 128, 128);
     spriteBatch.end();
+    tiledMapRenderer.render(new int[] {3});
   }
 }

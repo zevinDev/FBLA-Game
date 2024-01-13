@@ -1,0 +1,73 @@
+{
+    "Map/SizeTest": {
+        "height": 4300,
+        "width": 2
+    },
+    "activeFile": "map.tmx",
+    "expandedProjectPaths": [
+        "."
+    ],
+    "fileStates": {
+        "": {
+            "scaleInEditor": 1
+        },
+        "map.tmx": {
+            "scale": 4,
+            "selectedLayer": 4,
+            "viewCenter": {
+                "x": 235.75,
+                "y": 166.25
+            }
+        },
+        "map.tmx#Accesorie": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "map.tmx#Accesories": {
+            "scaleInDock": 2,
+            "scaleInEditor": 1
+        },
+        "map.tmx#Building": {
+            "scaleInDock": 2
+        },
+        "map.tmx#Road": {
+            "scaleInDock": 4
+        },
+        "new.tmx": {
+            "scale": 3.645625,
+            "selectedLayer": 2,
+            "viewCenter": {
+                "x": 160.19201097205556,
+                "y": 160.19201097205558
+            }
+        },
+        "new.tmx#accesories": {
+            "scaleInDock": 1
+        },
+        "new.tmx#city": {
+            "scaleInDock": 1
+        },
+        "new.tmx#doors": {
+            "scaleInDock": 1
+        }
+    },
+    "last.imagePath": "D:/Projects/FBLA-Game/assets",
+    "map.lastUsedFormat": "tmx",
+    "map.layerDataFormat": null,
+    "map.tileHeight": 16,
+    "map.tileWidth": 16,
+    "openFiles": [
+        "map.tmx"
+    ],
+    "project": "FBLA-Game.tiled-project",
+    "property.type": "bool",
+    "recentFiles": [
+        "map.tmx",
+        "new.tmx"
+    ],
+    "tileset.embedInMap": true,
+    "tileset.tileSize": {
+        "height": 16,
+        "width": 16
+    }
+}

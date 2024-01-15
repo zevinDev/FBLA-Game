@@ -34,6 +34,7 @@ public class GameScreen extends ScreenAdapter {
   float playerX;
   float playerY;
   float playerIdleFrame = 0;
+  boolean movementOverride = false;
 
   Sound step;
   boolean stepPlaying;
@@ -140,6 +141,7 @@ public class GameScreen extends ScreenAdapter {
     playerX = currentScene.getX();
     playerY = currentScene.getY();
     float playerSpeed = 300;
+	if (!movementOverride) {
     if (Gdx.input.isKeyPressed(Keys.W) && Gdx.input.isKeyPressed(Keys.D)) {
       playerY += Gdx.graphics.getDeltaTime() * playerSpeed;
       playerX += Gdx.graphics.getDeltaTime() * (playerSpeed + 25) / 1.5;
@@ -179,6 +181,14 @@ public class GameScreen extends ScreenAdapter {
     } else {
       currentFrame = idleAnimation.getKeyFrames()[(int) playerIdleFrame];
     }
+} 
+
+  if (Gdx.input.isKeyPressed(Keys.O)) {
+      userOverride(true);
+  }
+  if (Gdx.input.isKeyPressed(Keys.P)) {
+      userOverride(false);
+  }
   }
 
   private void handleCollision() {
@@ -231,8 +241,8 @@ public class GameScreen extends ScreenAdapter {
 
     topRightCell = layer.getCell((int)((x + 32) / 128), (int)(y / 128));
     topLeftCell = layer.getCell((int)((x - 32) / 128), (int)(y / 128));
-    bottomLeftCell = layer.getCell((int)((x - 32) / 128), (int)((y - 56) / 128));
-    bottomRightCell = layer.getCell((int)((x + 32) / 128), (int)((y - 56) / 128));
+    bottomLeftCell = layer.getCell((int)((x - 32) / 128), (int)((y - 32) / 128));
+    bottomRightCell = layer.getCell((int)((x + 32) / 128), (int)((y - 32) / 128));
 
     return checkCellCollision(topRightCell, topLeftCell, bottomLeftCell, bottomRightCell);
   }
@@ -256,6 +266,11 @@ public class GameScreen extends ScreenAdapter {
       }
     }
     return null;
+  }
+
+  private void userOverride(boolean check) {
+	movementOverride = check;
+  currentFrame = idleAnimation.getKeyFrames()[(int) playerIdleFrame];
   }
 
   private void renderScene(float playX, float playY) {

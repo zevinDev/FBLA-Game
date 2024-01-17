@@ -13,10 +13,10 @@
         },
         "map.tmx": {
             "scale": 1.5,
-            "selectedLayer": 6,
+            "selectedLayer": 7,
             "viewCenter": {
-                "x": 131.33333333333331,
-                "y": 49.33333333333337
+                "x": 283,
+                "y": 268
             }
         },
         "map.tmx#Accesorie": {
@@ -74,8 +74,8 @@
     "project": "FBLA-Game.tiled-project",
     "property.type": "bool",
     "recentFiles": [
-        "untitled.tmx",
         "map.tmx",
+        "untitled.tmx",
         "new.tmx"
     ],
     "tileset.embedInMap": true,

@@ -9,9 +9,13 @@
 	<inherits name='com.badlogic.gdx.ai' />
 
 	<inherits name='com.badlogic.ashley_gwt' />
-	<extend-configuration-property name="gdx.reflect.include" value="com.badlogic.gdx.maps.MapGroupLayer" /> 
-	<extend-configuration-property name="gdx.reflect.include" value="com.badlogic.gdx.maps.tiled.TiledMapTileLayer" /> 
-
+	<extend-configuration-property name="gdx.reflect.include" value="com.badlogic.gdx.maps" />
+	<extend-configuration-property name="gdx.reflect.include" value="com.badlogic.gdx.maps.objects" />
+	<extend-configuration-property name="gdx.reflect.include" value="com.badlogic.gdx.maps.tiled" />
+	<extend-configuration-property name="gdx.reflect.include" value="com.badlogic.gdx.maps.tiled.objects" />
+	<extend-configuration-property name="gdx.reflect.include" value="com.badlogic.gdx.maps.tiled.renderers" />
+	<extend-configuration-property name="gdx.reflect.include" value=" com.badlogic.gdx.maps.tiled.tiles" />
+	
 	<inherits name='FBLA' />
 	<entry-point class='com.fbla.game.client.HtmlLauncher' />
 	<set-configuration-property name='xsiframe.failIfScriptTag' value='FALSE'/>

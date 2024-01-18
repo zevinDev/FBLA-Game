@@ -1,4 +1,4 @@
-package com.fbla.game;
+package com.fbla.game.Util;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.maps.MapLayer;
@@ -14,10 +14,10 @@ import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import java.util.ArrayList;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
-
+import com.badlogic.gdx.math.Rectangle;
 
 public class CollisionUtil {
-    public static boolean checkCollision(MapObjects objects, Sprite player) {
+    public static boolean checkCollision(MapObjects objects, Rectangle player) {
         for (int i = 0; i < objects.getCount(); i++)
         {
             MapObject mapObject = objects.get(i);
@@ -26,7 +26,7 @@ public class CollisionUtil {
             {
                 RectangleMapObject rectangleObject = (RectangleMapObject) mapObject;
                 Rectangle rectangle = rectangleObject.getRectangle();
-                if (Intersector.overlaps(rectangle, player.getBoundingRectangle())) {
+                if (Intersector.overlaps(rectangle, player)) {
                   return true;
                }
                 
@@ -41,7 +41,7 @@ public class CollisionUtil {
                     throw new IllegalArgumentException("Only circles are allowed.");
     
                 Circle circle = new Circle(ellipse.x + ellipse.width / 2, ellipse.y + ellipse.height / 2, ellipse.width / 2);
-                if(Intersector.overlaps(circle, player.getBoundingRectangle())) {
+                if(Intersector.overlaps(circle, player)) {
                   return true;
                 }
             }

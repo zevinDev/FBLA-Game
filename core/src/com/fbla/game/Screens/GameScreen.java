@@ -1,5 +1,11 @@
-package com.fbla.game;
+package com.fbla.game.Screens;
 
+import com.fbla.game.FBLA;
+import com.fbla.game.Util.AnimationUtil;
+import com.fbla.game.Util.PlayerMovementUtil;
+import com.fbla.game.Util.SceneUtil;
+import com.fbla.game.Util.CollisionUtil;
+import com.fbla.game.Entity.AIEntity;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.ScreenAdapter;
@@ -13,6 +19,8 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Intersector;
 
 
 public class GameScreen extends ScreenAdapter {
@@ -31,6 +39,8 @@ public class GameScreen extends ScreenAdapter {
   AnimationUtil animationUtil;
   PlayerMovementUtil playerMovementUtil;
 
+  private AIEntity aiEntity;
+
 
   public GameScreen(FBLA game) {
     this.game = game;
@@ -45,6 +55,7 @@ public class GameScreen extends ScreenAdapter {
     setupAudio();
     currentScene = mainScene;
     playerMovementUtil = new PlayerMovementUtil(currentScene.getX(), currentScene.getY(), 300, animationUtil);
+    aiEntity = new AIEntity(new Vector2(1000, 1000), new Texture(Gdx.files.internal("spritesheets/Josuha.png")));
   }
 
   @Override
@@ -52,6 +63,7 @@ public class GameScreen extends ScreenAdapter {
     animationUtil.updateStateTime();
     handlePlayerMovement();
     handleCollision();
+    aiEntity.update(delta);
   }
 
   @Override
@@ -112,7 +124,7 @@ public class GameScreen extends ScreenAdapter {
     Music music = Gdx.audio.newMusic(Gdx.files.internal("audio/hometownOST.mp3"));
     music.setLooping(true);
     music.play();
-    music.setVolume(0.1f);
+    music.setVolume(0f);
 
     Sound step = Gdx.audio.newSound(Gdx.files.internal("audio/shoestep.wav"));
   }
@@ -125,7 +137,7 @@ public class GameScreen extends ScreenAdapter {
   private void handleCollision() {
     float playerX = playerMovementUtil.getPlayerX();
     float playerY = playerMovementUtil.getPlayerY();
-    if (CollisionUtil.checkCollision(currentScene.getCollisionObjects(), player)) {
+    if (CollisionUtil.checkCollision(currentScene.getCollisionObjects(), player.getBoundingRectangle())) {
       playerX = currentScene.getX();
       playerY = currentScene.getY();
     } else if (CollisionUtil.checkOpacity(currentScene.getLayer("ObjectOpacity"), playerX, playerY)){
@@ -138,6 +150,16 @@ public class GameScreen extends ScreenAdapter {
       currentScene.setLayerOpacity("Buildings", 1f);
       currentScene.setLayerOpacity("BuildingAccesories", 1f);
     }
+    if(CollisionUtil.checkCollision(currentScene.getCollisionObjects(), aiEntity.getBoundingBox())){
+      aiEntity.handleCollision();
+    } else if (Intersector.overlaps(aiEntity.getBoundingBox(), player.getBoundingRectangle())){
+      aiEntity.playerCollided();
+      playerX = currentScene.getX();
+      playerY = currentScene.getY();
+    } else {
+      aiEntity.wander();
+    }
+    // || (Intersector.overlaps(aiEntity.getBoundingBox(), player.getBoundingRectangle())) && aiEntity.getStateMachine().isInState(AIEntity.AIState.WANDER))
     renderScene(playerX, playerY);
   }
 
@@ -148,10 +170,19 @@ public class GameScreen extends ScreenAdapter {
     cam.position.set(playX, playY, 0);
     cam.update();
     tiledMapRenderer.setView(cam);
-    tiledMapRenderer.render(new int[] {0,1,2,4,5});
+
     spriteBatch.setProjectionMatrix(cam.combined);
+    TextureRegion aiCurrentFrame = aiEntity.getCurrentFrame();
+
+    // Draw the current frame at the AI entity's position
+    tiledMapRenderer.render(new int[] {0,2});
+    spriteBatch.begin();
+    spriteBatch.draw(aiCurrentFrame, aiEntity.getPosition().x, aiEntity.getPosition().y, 128, 128);
+    spriteBatch.end();
+    tiledMapRenderer.render(new int[] {1,4,5});
     spriteBatch.begin();
     spriteBatch.draw(animationUtil.getCurrentFrame(), (playX - 64), (playY - 64), 128, 128);
     spriteBatch.end();
+
   }
 }

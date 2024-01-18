@@ -1,10 +1,12 @@
-package com.fbla.game;
+package com.fbla.game.Screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.GL20;
+import com.fbla.game.FBLA;
+
 
 public class TitleScreen extends ScreenAdapter {
 

@@ -1,4 +1,4 @@
-package com.fbla.game;
+package com.fbla.game.Util;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Animation;

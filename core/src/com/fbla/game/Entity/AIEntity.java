@@ -22,6 +22,8 @@ public class AIEntity {
     private float speed = 200;
     private Rectangle boundingBox;  // Bounding rectangle for collision detection
     private AnimationUtil animationUtil;
+    private String animationDirection = "downAnimation";
+    private int animationIdleFrame = 0;
     
 
     public AIEntity(Vector2 homePosition, Texture spriteSheet) {
@@ -89,19 +91,23 @@ public class AIEntity {
                     switch (direction) {
                         case 0:  // Up
                             entity.targetPosition = new Vector2(entity.position.x, entity.position.y + 300);
-                            entity.animationUtil.updateAnimation("upAnimation", 1);
+                            entity.animationDirection = "upAnimation";
+                            entity.animationIdleFrame = 1;
                             break;
                         case 1:  // Down
                             entity.targetPosition = new Vector2(entity.position.x, entity.position.y - 300);
-                            entity.animationUtil.updateAnimation("downAnimation", 0);
+                            entity.animationDirection = "downAnimation";
+                            entity.animationIdleFrame = 0;
                             break;
                         case 2:  // Left
                             entity.targetPosition = new Vector2(entity.position.x - 300, entity.position.y);
-                            entity.animationUtil.updateAnimation("leftAnimation", 3);
+                            entity.animationDirection = "leftAnimation";
+                            entity.animationIdleFrame = 3;
                             break;
                         case 3:  // Right
                             entity.targetPosition = new Vector2(entity.position.x + 300, entity.position.y);
-                            entity.animationUtil.updateAnimation("rightAnimation", 2);
+                            entity.animationDirection = "rightAnimation";
+                            entity.animationIdleFrame = 2;
                             break;
                     }
                 }
@@ -112,6 +118,8 @@ public class AIEntity {
                 // Move in the chosen direction
                 entity.position.x += entity.speed * entity.deltaTime * direction.x;
                 entity.position.y += entity.speed * entity.deltaTime * direction.y;
+                entity.animationUtil.updateAnimation(entity.animationDirection, entity.animationIdleFrame);
+                entity.animationUtil.updateStateTime();
             }
     
             @Override
@@ -203,6 +211,17 @@ public class AIEntity {
     public void handleCollision() {
         // Reverse the direction of the AI's movement
         targetPosition = new Vector2(position.x - (targetPosition.x - position.x), position.y - (targetPosition.y - position.y));
+        
+        // Update the animation direction based on the new movement direction
+        if (targetPosition.x > position.x) {
+            animationDirection = "rightAnimation";
+        } else if (targetPosition.x < position.x) {
+            animationDirection = "leftAnimation";
+        } else if (targetPosition.y > position.y) {
+            animationDirection = "upAnimation";
+        } else if (targetPosition.y < position.y) {
+            animationDirection = "downAnimation";
+        }
     }
 
     public void wander(){

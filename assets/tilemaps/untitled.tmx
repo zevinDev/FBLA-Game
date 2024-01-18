@@ -69,7 +69,7 @@
  <objectgroup id="7" name="Collision">
   <object id="9" x="148.168" y="213.58" width="39.8474" height="7.25521"/>
   <object id="10" x="83.1251" y="212.421" width="41.3182" height="7.81815"/>
-  <object id="11" x="256.125" y="240" width="16" height="32"/>
+  <object id="11" x="256.125" y="244.25" width="11.5" height="22.5"/>
   <object id="12" x="0.136364" y="144.545" width="16.0909" height="180.122"/>
   <object id="14" x="287.955" y="144.023" width="16.0909" height="181.455"/>
   <object id="15" x="18.8561" y="175.515" width="269.5" height="10.8182"/>

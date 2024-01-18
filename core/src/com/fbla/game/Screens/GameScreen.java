@@ -117,7 +117,7 @@ public class GameScreen extends ScreenAdapter {
   }
 
   private void setupMainScene() {
-    mainScene = new SceneUtil("main", -1, -1, 100, 100, new TmxMapLoader().load("tilemaps/map.tmx"));
+    mainScene = new SceneUtil("main", -1, -1, 200, 200, new TmxMapLoader().load("tilemaps/untitled.tmx"));
   }
 
   private void setupAudio() {

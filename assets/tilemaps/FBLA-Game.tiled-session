@@ -3,20 +3,35 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "map.tmx",
+    "activeFile": "untitled.tmx",
     "expandedProjectPaths": [
         "."
     ],
     "fileStates": {
         "": {
+            "scaleInDock": 0.125,
             "scaleInEditor": 1
         },
-        "map.tmx": {
-            "scale": 1.5,
-            "selectedLayer": 7,
+        "#school": {
+            "scaleInDock": 0.03125
+        },
+        "ComputerClassroom.tmx": {
+            "scale": 2.7540865384615385,
+            "selectedLayer": 0,
             "viewCenter": {
-                "x": 283,
-                "y": 268
+                "x": 104.20878065811294,
+                "y": 64.08658462075587
+            }
+        },
+        "map.tmx": {
+            "expandedObjectLayers": [
+                18
+            ],
+            "scale": 3,
+            "selectedLayer": 6,
+            "viewCenter": {
+                "x": 249.83333333333331,
+                "y": 158.83333333333331
             }
         },
         "map.tmx#Accesorie": {
@@ -51,31 +66,49 @@
         "new.tmx#doors": {
             "scaleInDock": 1
         },
+        "schoolmore.tsx": {
+            "scaleInDock": 1
+        },
         "untitled.tmx": {
-            "scale": 1.5,
-            "selectedLayer": 1,
+            "expandedObjectLayers": [
+                7
+            ],
+            "scale": 3,
+            "selectedLayer": 7,
             "viewCenter": {
-                "x": 95.33333333333331,
-                "y": 62.666666666666686
+                "x": 149.83333333333334,
+                "y": 242.83333333333331
             }
+        },
+        "untitled.tmx#Accesories": {
+            "scaleInDock": 1
+        },
+        "untitled.tmx#School tileset (3) (1)": {
+            "scaleInDock": 0.0625
+        },
+        "untitled.tmx#school": {
+            "scaleInDock": 4,
+            "scaleInEditor": 1
         },
         "untitled.tmx#test": {
             "scaleInDock": 1
         }
     },
-    "last.imagePath": "D:/Projects/FBLA-Game/assets",
+    "last.imagePath": "C:/Users/joshu/Documents/GitHub/FBLA-Game/assets/tilemaps",
     "map.lastUsedFormat": "tmx",
     "map.layerDataFormat": null,
     "map.tileHeight": 16,
     "map.tileWidth": 16,
     "openFiles": [
-        "map.tmx"
+        "map.tmx",
+        "untitled.tmx"
     ],
     "project": "FBLA-Game.tiled-project",
     "property.type": "bool",
     "recentFiles": [
         "map.tmx",
         "untitled.tmx",
+        "ComputerClassroom.tmx",
         "new.tmx"
     ],
     "tileset.embedInMap": true,

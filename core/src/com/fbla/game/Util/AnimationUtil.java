@@ -45,6 +45,10 @@ public class AnimationUtil {
         stateTime += Gdx.graphics.getDeltaTime();
     }
 
+    public void updateStateTime(float stateTime){
+        stateTime = stateTime;
+    }
+
     public TextureRegion getCurrentFrame(){
         return currentFrame;
     }

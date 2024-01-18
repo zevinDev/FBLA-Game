@@ -55,7 +55,7 @@ public class GameScreen extends ScreenAdapter {
     setupAudio();
     currentScene = mainScene;
     playerMovementUtil = new PlayerMovementUtil(currentScene.getX(), currentScene.getY(), 300, animationUtil);
-    aiEntity = new AIEntity(new Vector2(1000, 1000), new Texture(Gdx.files.internal("spritesheets/Josuha.png")));
+    aiEntity = new AIEntity(new Vector2(1000, 1000), new Texture(Gdx.files.internal("spritesheets/astronaut.png")));
   }
 
   @Override
@@ -117,7 +117,7 @@ public class GameScreen extends ScreenAdapter {
   }
 
   private void setupMainScene() {
-    mainScene = new SceneUtil("main", -1, -1, 100, 100, new TmxMapLoader().load("tilemaps/map.tmx"));
+    mainScene = new SceneUtil("main", -1, -1, 200, 200, new TmxMapLoader().load("tilemaps/untitled.tmx"));
   }
 
   private void setupAudio() {
@@ -172,12 +172,11 @@ public class GameScreen extends ScreenAdapter {
     tiledMapRenderer.setView(cam);
 
     spriteBatch.setProjectionMatrix(cam.combined);
-    TextureRegion aiCurrentFrame = aiEntity.getCurrentFrame();
 
     // Draw the current frame at the AI entity's position
     tiledMapRenderer.render(new int[] {0,2});
     spriteBatch.begin();
-    spriteBatch.draw(aiCurrentFrame, aiEntity.getPosition().x, aiEntity.getPosition().y, 128, 128);
+    spriteBatch.draw(aiEntity.getCurrentFrame(), aiEntity.getPosition().x, aiEntity.getPosition().y, 128, 128);
     spriteBatch.end();
     tiledMapRenderer.render(new int[] {1,4,5});
     spriteBatch.begin();

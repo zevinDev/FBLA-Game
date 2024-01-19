@@ -73,7 +73,7 @@ public class GameScreen extends ScreenAdapter {
   }
 
   private void setupAnimations() {
-    spriteSheet = new Texture(Gdx.files.internal("spritesheets/zevin.png"));
+    spriteSheet = new Texture(Gdx.files.internal("spritesheets/taggart.png"));
     player = new Sprite(spriteSheet, 0, 0, 16, 8);
     TextureRegion[][] tmp = TextureRegion.split(spriteSheet, 16, 16);
     TextureRegion[] downFrames = new TextureRegion[2];

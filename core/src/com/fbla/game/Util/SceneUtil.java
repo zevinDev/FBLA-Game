@@ -7,6 +7,8 @@ import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.MapObjects;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+import java.util.ArrayList;
+import com.fbla.game.Util.TeleporterUtil;
 
 
 public class SceneUtil {
@@ -17,6 +19,7 @@ public class SceneUtil {
   private TiledMapRenderer mapRenderer;
   private MapLayer collisionLayer;
   private TiledMap tilemap;
+  private ArrayList<TeleporterUtil> teleporters;
 
   public SceneUtil(String name, float X, float Y, float startX, float startY, TiledMap tilemap) {
     this.name = name;
@@ -57,6 +60,10 @@ public class SceneUtil {
     return collisionLayer.getObjects();
   }
 
+  public void setTeleporters(ArrayList<TeleporterUtil> teleporters) {
+    this.teleporters = teleporters;
+  }
+
   public void setLayerOpacity(String layerName, float opacity) {
     if(tilemap.getLayers().get(layerName) != null) {
       ((TiledMapTileLayer) tilemap.getLayers().get(layerName)).setOpacity(opacity);
@@ -65,6 +72,10 @@ public class SceneUtil {
 
   public TiledMapTileLayer getLayer(String layerName) {
     return (TiledMapTileLayer) tilemap.getLayers().get(layerName);
+  }
+
+  public ArrayList<TeleporterUtil> getTeleporters() {
+    return teleporters;
   }
 
 }

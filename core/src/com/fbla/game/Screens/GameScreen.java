@@ -6,6 +6,7 @@ import com.fbla.game.Util.PlayerMovementUtil;
 import com.fbla.game.Util.SceneUtil;
 import com.fbla.game.Util.CollisionUtil;
 import com.fbla.game.Entity.AIEntity;
+import com.fbla.game.Util.TeleporterUtil;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.ScreenAdapter;
@@ -21,6 +22,9 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Intersector;
+import java.util.ArrayList;
+
+
 
 
 public class GameScreen extends ScreenAdapter {
@@ -33,7 +37,8 @@ public class GameScreen extends ScreenAdapter {
 
   OrthographicCamera cam;
 
-  SceneUtil mainScene;
+  SceneUtil classroomScene;
+  SceneUtil hallwayScene;
   SceneUtil currentScene;
 
   AnimationUtil animationUtil;
@@ -51,9 +56,12 @@ public class GameScreen extends ScreenAdapter {
   public void show() {
     setupAnimations();
     setupCamera();
-    setupMainScene();
+    setupClassroomScene();
+    setupHallwayScene();
+    setupClassroomSceneTeleporters();
+    setupHallwaySceneTeleporters();
     setupAudio();
-    currentScene = mainScene;
+    currentScene = classroomScene;
     playerMovementUtil = new PlayerMovementUtil(currentScene.getX(), currentScene.getY(), 300, animationUtil);
     aiEntity = new AIEntity(new Vector2(1000, 1000), new Texture(Gdx.files.internal("spritesheets/astronaut.png")));
   }
@@ -116,8 +124,24 @@ public class GameScreen extends ScreenAdapter {
     cam.update();
   }
 
-  private void setupMainScene() {
-    mainScene = new SceneUtil("main", -1, -1, 200, 200, new TmxMapLoader().load("tilemaps/untitled.tmx"));
+  private void setupClassroomScene() {
+    classroomScene = new SceneUtil("classroom", -1, -1, 200, 200, new TmxMapLoader().load("tilemaps/untitled.tmx"));
+  }
+
+  private void setupClassroomSceneTeleporters() {
+    ArrayList<TeleporterUtil> teleporters = new ArrayList<TeleporterUtil>();
+    teleporters.add(new TeleporterUtil(classroomScene, hallwayScene, 1536, 128));
+    classroomScene.setTeleporters(teleporters);
+  }
+
+  private void setupHallwayScene() {
+    hallwayScene = new SceneUtil("hallway", -1, -1, 640, 768, new TmxMapLoader().load("tilemaps/hallway.tmx"));
+  }
+
+  private void setupHallwaySceneTeleporters() {
+    ArrayList<TeleporterUtil> teleporters = new ArrayList<TeleporterUtil>();
+    teleporters.add(new TeleporterUtil(hallwayScene, classroomScene, 640, 780));
+    hallwayScene.setTeleporters(teleporters);
   }
 
   private void setupAudio() {
@@ -137,6 +161,14 @@ public class GameScreen extends ScreenAdapter {
   private void handleCollision() {
     float playerX = playerMovementUtil.getPlayerX();
     float playerY = playerMovementUtil.getPlayerY();
+    ArrayList<TeleporterUtil> teleporters = currentScene.getTeleporters();
+    for (TeleporterUtil teleporter : teleporters) {
+      if (teleporter.playerTouchedTeleporter(player.getBoundingRectangle())) {
+        currentScene = teleporter.getNextScene();
+        playerX = currentScene.getX();
+        playerY = currentScene.getY();
+      }
+    }
     if (CollisionUtil.checkCollision(currentScene.getCollisionObjects(), player.getBoundingRectangle())) {
       playerX = currentScene.getX();
       playerY = currentScene.getY();

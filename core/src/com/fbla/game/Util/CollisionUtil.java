@@ -78,4 +78,13 @@ public class CollisionUtil {
         }
         return false;
       }
+
+    public static boolean checkTeleporterCollision(ArrayList<TeleporterUtil> teleporters, Rectangle player){
+        for (TeleporterUtil teleporter : teleporters) {
+            if (teleporter.playerTouchedTeleporter(player)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

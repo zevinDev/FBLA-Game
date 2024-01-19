@@ -30,8 +30,8 @@
             "scale": 3,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 249.83333333333331,
-                "y": 158.83333333333331
+                "x": 240.16666666666666,
+                "y": 160
             }
         },
         "map.tmx#Accesorie": {
@@ -76,8 +76,8 @@
             "scale": 4,
             "selectedLayer": 4,
             "viewCenter": {
-                "x": 86.125,
-                "y": 232.125
+                "x": 85.875,
+                "y": 231.75
             }
         },
         "untitled.tmx#Accesories": {

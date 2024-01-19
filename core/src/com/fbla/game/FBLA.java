@@ -4,12 +4,13 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.fbla.game.Screens.TitleScreen;
 
 public class FBLA extends Game {
     
-	SpriteBatch batch;
+	public SpriteBatch batch;
     ShapeRenderer shapeRenderer;
-    BitmapFont font;
+    public BitmapFont font;
 
     @Override
     public void create () {

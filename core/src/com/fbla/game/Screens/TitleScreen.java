@@ -8,19 +8,17 @@ import com.badlogic.gdx.graphics.GL20;
 import com.fbla.game.FBLA;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.fbla.game.Util.GifDecoderUtil;
 import com.badlogic.gdx.graphics.Texture;
 
 
 public class TitleScreen extends ScreenAdapter {
 
     FBLA game;
-    Animation<TextureRegion> animation;
-    float elapsed;
     TextureRegion[][] startSheet;
     TextureRegion currentFrame;
     Texture settingsButton;
     Texture leaderboardButton;
+    Texture logo;
 
     public TitleScreen(FBLA game) {
         this.game = game;
@@ -28,20 +26,18 @@ public class TitleScreen extends ScreenAdapter {
 
     @Override
     public void show(){
-        animation = GifDecoderUtil.loadGIFAnimation(Animation.PlayMode.LOOP, Gdx.files.internal("spritesheets/titlescreen.gif").read());
         startSheet = TextureRegion.split(new Texture(Gdx.files.internal("spritesheets/start.png")), 720, 208);
+        logo = new Texture(Gdx.files.internal("spritesheets/logo.png"));
         settingsButton = new Texture(Gdx.files.internal("spritesheets/settings.png"));
         leaderboardButton = new Texture(Gdx.files.internal("spritesheets/leaderboard.png"));
     }
 
     @Override
     public void render(float delta) {
-        elapsed += Gdx.graphics.getDeltaTime();
-        
         Gdx.gl.glClearColor(38/255f, 43/255f, 68/255f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         game.batch.begin();
-        game.batch.draw(animation.getKeyFrame(elapsed), 64, 704);
+        game.batch.draw(logo, 64, 704);
         
         // Get the mouse's x and y coordinates
         int mouseX = Gdx.input.getX();

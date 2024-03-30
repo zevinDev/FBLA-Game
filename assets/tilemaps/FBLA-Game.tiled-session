@@ -23,6 +23,17 @@
                 "y": 64.08658462075587
             }
         },
+        "hallway.tmx": {
+            "scale": 2.1185,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": -54.283691291007784,
+                "y": 120.13216898749116
+            }
+        },
+        "hallway.tmx#school": {
+            "scaleInDock": 4
+        },
         "map.tmx": {
             "expandedObjectLayers": [
                 18
@@ -30,8 +41,8 @@
             "scale": 3,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 240.16666666666666,
-                "y": 160
+                "x": 239.66666666666669,
+                "y": 159.49999999999997
             }
         },
         "map.tmx#Accesorie": {
@@ -76,8 +87,8 @@
             "scale": 4,
             "selectedLayer": 4,
             "viewCenter": {
-                "x": 85.875,
-                "y": 231.75
+                "x": 118,
+                "y": 245.625
             }
         },
         "untitled.tmx#Accesories": {

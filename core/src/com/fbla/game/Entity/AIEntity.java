@@ -24,12 +24,19 @@ public class AIEntity {
     private AnimationUtil animationUtil;
     private String animationDirection = "downAnimation";
     private int animationIdleFrame = 0;
-    
+    private boolean isMoving = true;
 
-    public AIEntity(Vector2 homePosition, Texture spriteSheet) {
+
+    public AIEntity(Vector2 homePosition, Texture spriteSheet, boolean isMoving) {
         this.homePosition = homePosition;
         this.position = new Vector2(homePosition);
-        this.stateMachine = new DefaultStateMachine<>(this, AIState.WANDER);
+        this.isMoving = isMoving;
+        if(isMoving){
+            this.stateMachine = new DefaultStateMachine<>(this, AIState.WANDER);
+        } else {
+            this.stateMachine = new DefaultStateMachine<>(this, AIState.IDLE);
+        }
+        
 
         // Split the sprite sheet into frames
         int frameWidth = spriteSheet.getWidth() / 3;
@@ -225,8 +232,12 @@ public class AIEntity {
     }
 
     public void wander(){
-        stateMachine.changeState(AIState.WANDER);
+        if(isMoving){
+            stateMachine.changeState(AIState.WANDER);
+        }
     }
+
+
 
     public StateMachine<AIEntity, AIState> getStateMachine() {
         return stateMachine;

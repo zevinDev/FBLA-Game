@@ -7,6 +7,7 @@ import com.fbla.game.Util.SceneUtil;
 import com.fbla.game.Util.CollisionUtil;
 import com.fbla.game.Entity.AIEntity;
 import com.fbla.game.Util.TeleporterUtil;
+import com.fbla.game.Util.TextUtil;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.ScreenAdapter;
@@ -42,9 +43,9 @@ public class GameScreen extends ScreenAdapter {
   SceneUtil currentScene;
 
   AnimationUtil animationUtil;
+  TextUtil textUtil;
   PlayerMovementUtil playerMovementUtil;
 
-  private AIEntity aiEntity;
 
 
   public GameScreen(FBLA game) {
@@ -60,18 +61,21 @@ public class GameScreen extends ScreenAdapter {
     setupHallwayScene();
     setupClassroomSceneTeleporters();
     setupHallwaySceneTeleporters();
+    setupClassroomSceneAI();
     setupAudio();
+    textUtil = new TextUtil();
+    textUtil.loadTextBox();
     currentScene = classroomScene;
     playerMovementUtil = new PlayerMovementUtil(currentScene.getX(), currentScene.getY(), 300, animationUtil);
-    aiEntity = new AIEntity(new Vector2(1000, 1000), new Texture(Gdx.files.internal("spritesheets/astronaut.png")));
   }
 
   @Override
   public void render(float delta) {
     animationUtil.updateStateTime();
+    textUtil.updateStateTime();
+    updateAI(delta);
     handlePlayerMovement();
     handleCollision();
-    aiEntity.update(delta);
   }
 
   @Override
@@ -117,6 +121,15 @@ public class GameScreen extends ScreenAdapter {
     animationUtil = new AnimationUtil(downAnimation, upAnimation, leftAnimation, rightAnimation, idleAnimation);
   }
 
+  private void updateAI(float delta) {
+    ArrayList<AIEntity> aiEntities = currentScene.getAIEntities();
+    if(aiEntities != null){
+    for (AIEntity aiEntity : aiEntities) {
+      aiEntity.update(delta);
+    }
+    }
+  }
+
   private void setupCamera() {
     cam = new OrthographicCamera();
     cam.setToOrtho(false);
@@ -132,6 +145,12 @@ public class GameScreen extends ScreenAdapter {
     ArrayList<TeleporterUtil> teleporters = new ArrayList<TeleporterUtil>();
     teleporters.add(new TeleporterUtil(classroomScene, hallwayScene, 1536, 128));
     classroomScene.setTeleporters(teleporters);
+  }
+
+  private void setupClassroomSceneAI(){
+    ArrayList<AIEntity> aiEntities = new ArrayList<AIEntity>();
+    aiEntities.add(new AIEntity(new Vector2(1000, 1000), new Texture(Gdx.files.internal("spritesheets/astronaut.png")), true));
+    classroomScene.setAIEntities(aiEntities);
   }
 
   private void setupHallwayScene() {
@@ -169,6 +188,22 @@ public class GameScreen extends ScreenAdapter {
         playerY = currentScene.getY();
       }
     }
+    ArrayList<AIEntity> aiEntities = currentScene.getAIEntities();
+    if(aiEntities != null){
+    for (AIEntity aiEntity : aiEntities) {
+      if (CollisionUtil.checkCollision(currentScene.getCollisionObjects(), aiEntity.getBoundingBox())) {
+        aiEntity.handleCollision();
+      } else if (Intersector.overlaps(aiEntity.getBoundingBox(), player.getBoundingRectangle())) {
+        aiEntity.playerCollided();
+        textUtil.isAnimating(true);
+        playerX = currentScene.getX();
+        playerY = currentScene.getY();
+      } else {
+        aiEntity.wander();
+        textUtil.isAnimating(false);
+      }
+    }
+  }
     if (CollisionUtil.checkCollision(currentScene.getCollisionObjects(), player.getBoundingRectangle())) {
       playerX = currentScene.getX();
       playerY = currentScene.getY();
@@ -182,16 +217,6 @@ public class GameScreen extends ScreenAdapter {
       currentScene.setLayerOpacity("Buildings", 1f);
       currentScene.setLayerOpacity("BuildingAccesories", 1f);
     }
-    if(CollisionUtil.checkCollision(currentScene.getCollisionObjects(), aiEntity.getBoundingBox())){
-      aiEntity.handleCollision();
-    } else if (Intersector.overlaps(aiEntity.getBoundingBox(), player.getBoundingRectangle())){
-      aiEntity.playerCollided();
-      playerX = currentScene.getX();
-      playerY = currentScene.getY();
-    } else {
-      aiEntity.wander();
-    }
-    // || (Intersector.overlaps(aiEntity.getBoundingBox(), player.getBoundingRectangle())) && aiEntity.getStateMachine().isInState(AIEntity.AIState.WANDER))
     renderScene(playerX, playerY);
   }
 
@@ -207,13 +232,19 @@ public class GameScreen extends ScreenAdapter {
 
     // Draw the current frame at the AI entity's position
     tiledMapRenderer.render(new int[] {0,2});
-    spriteBatch.begin();
-    spriteBatch.draw(aiEntity.getCurrentFrame(), aiEntity.getPosition().x, aiEntity.getPosition().y, 128, 128);
-    spriteBatch.end();
+    ArrayList<AIEntity> aiEntities = currentScene.getAIEntities();
+    if(aiEntities != null){
+    for (AIEntity aiEntity : aiEntities){
+      spriteBatch.begin();
+      spriteBatch.draw(aiEntity.getCurrentFrame(), aiEntity.getPosition().x, aiEntity.getPosition().y, 128, 128);
+      spriteBatch.end();
+    }
+  }
     tiledMapRenderer.render(new int[] {1,4,5});
     spriteBatch.begin();
     spriteBatch.draw(animationUtil.getCurrentFrame(), (playX - 64), (playY - 64), 128, 128);
     spriteBatch.end();
 
+    textUtil.renderText(spriteBatch, playX, playY);
   }
 }

@@ -3,9 +3,8 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "untitled.tmx",
+    "activeFile": "hallway.tmx",
     "expandedProjectPaths": [
-        "."
     ],
     "fileStates": {
         "": {
@@ -23,6 +22,17 @@
                 "y": 64.08658462075587
             }
         },
+        "hallway.tmx": {
+            "scale": 3.8261249999999998,
+            "selectedLayer": 7,
+            "viewCenter": {
+                "x": 349.5703877944395,
+                "y": 131.72596295207296
+            }
+        },
+        "hallway.tmx#school": {
+            "scaleInDock": 1
+        },
         "map.tmx": {
             "expandedObjectLayers": [
                 18
@@ -30,8 +40,8 @@
             "scale": 3,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 240.16666666666666,
-                "y": 160
+                "x": 239.83333333333331,
+                "y": 159.33333333333334
             }
         },
         "map.tmx#Accesorie": {
@@ -76,8 +86,8 @@
             "scale": 4,
             "selectedLayer": 4,
             "viewCenter": {
-                "x": 85.875,
-                "y": 231.75
+                "x": 85.625,
+                "y": 231.25
             }
         },
         "untitled.tmx#Accesories": {
@@ -103,13 +113,15 @@
     "map.width": 25,
     "openFiles": [
         "map.tmx",
-        "untitled.tmx"
+        "untitled.tmx",
+        "hallway.tmx"
     ],
     "project": "FBLA-Game.tiled-project",
     "property.type": "bool",
     "recentFiles": [
         "map.tmx",
         "untitled.tmx",
+        "hallway.tmx",
         "ComputerClassroom.tmx",
         "new.tmx"
     ],

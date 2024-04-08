@@ -6,8 +6,6 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
-import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
 
 
 
@@ -16,8 +14,6 @@ public class TextUtil {
     float stateTime = 0f;
     boolean isAnimating = false;
     Animation < TextureRegion > paperAnimation;
-    FreeTypeFontGenerator generator;
-FreeTypeFontParameter parameter;
     BitmapFont font;
 
     public void loadTextBox(){
@@ -43,13 +39,8 @@ FreeTypeFontParameter parameter;
 
     paperAnimation = new Animation < TextureRegion > (.03f, paperFrames);
 
-    generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/dogica.ttf"));
-    parameter = new FreeTypeFontParameter();
-    parameter.size = 14; // Set the size of the font
-    font = generator.generateFont(parameter); // Generate the BitmapFont
+    font = new BitmapFont(Gdx.files.internal("fonts/dogica.fnt"));
     font.setColor(0, 0, 0, 1);
-
-    generator.dispose();
 
     }
 

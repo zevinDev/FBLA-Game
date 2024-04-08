@@ -23,6 +23,7 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Intersector;
+import com.badlogic.gdx.math.Rectangle;
 import java.util.ArrayList;
 
 
@@ -72,7 +73,6 @@ public class GameScreen extends ScreenAdapter {
   @Override
   public void render(float delta) {
     animationUtil.updateStateTime();
-    textUtil.updateStateTime();
     updateAI(delta);
     handlePlayerMovement();
     handleCollision();
@@ -149,7 +149,7 @@ public class GameScreen extends ScreenAdapter {
 
   private void setupClassroomSceneAI(){
     ArrayList<AIEntity> aiEntities = new ArrayList<AIEntity>();
-    aiEntities.add(new AIEntity(new Vector2(1000, 1000), new Texture(Gdx.files.internal("spritesheets/astronaut.png")), true));
+    aiEntities.add(new AIEntity(new Vector2(1792, 768), new Texture(Gdx.files.internal("spritesheets/astronaut.png")), true));
     classroomScene.setAIEntities(aiEntities);
   }
 
@@ -196,8 +196,12 @@ public class GameScreen extends ScreenAdapter {
       } else if (Intersector.overlaps(aiEntity.getBoundingBox(), player.getBoundingRectangle())) {
         aiEntity.playerCollided();
         textUtil.isAnimating(true);
-        playerX = currentScene.getX();
-        playerY = currentScene.getY();
+        playerMovementUtil.disableMovement();
+        Rectangle shrunkRectangle = new Rectangle(player.getBoundingRectangle().x + 32, player.getBoundingRectangle().y + 32, player.getBoundingRectangle().width - 64, player.getBoundingRectangle().height - 64);
+        if (Intersector.overlaps(shrunkRectangle, aiEntity.getBoundingBox())) {
+          playerX = currentScene.getX();
+          playerY = currentScene.getY();
+        }
       } else {
         aiEntity.wander();
         textUtil.isAnimating(false);

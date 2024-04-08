@@ -25,13 +25,14 @@ public class AIEntity {
     private String animationDirection = "downAnimation";
     private int animationIdleFrame = 0;
     private boolean isMoving = true;
+    private float idleTime = 0;  // Add this line at the top of your class
 
 
     public AIEntity(Vector2 homePosition, Texture spriteSheet, boolean isMoving) {
         this.homePosition = homePosition;
         this.position = new Vector2(homePosition);
         this.isMoving = isMoving;
-        if(isMoving){
+        if(isMoving && idleTime == 0){
             this.stateMachine = new DefaultStateMachine<>(this, AIState.WANDER);
         } else {
             this.stateMachine = new DefaultStateMachine<>(this, AIState.IDLE);
@@ -82,6 +83,17 @@ public class AIEntity {
         animationUtil.updateStateTime(deltaTime);
         stateMachine.update();
         this.deltaTime = deltaTime;
+        if (idleTime > 0) {
+            idleTime -= deltaTime;
+        } else if (idleTime < 0) {
+            idleTime = 0;
+        }
+        if (idleTime > 0) {
+            stateMachine.changeState(AIState.IDLE);
+        } else if (isMoving) {
+            // Once idleTime reaches 0, allow the AI to move again
+            stateMachine.changeState(AIState.WANDER);
+        }
 
         // Update the bounding box position
         boundingBox.setPosition(position.x/8, position.y/8);
@@ -91,7 +103,9 @@ public class AIEntity {
         WANDER {
             @Override
             public void update(AIEntity entity) {
-                if (entity.targetPosition == null || entity.position.dst(entity.targetPosition) < 1) {
+                if(entity.idleTime <= 0){
+
+                if (entity.targetPosition == null || entity.position.dst(entity.targetPosition) < 1){
                     // If we've reached the target position or don't have one, choose a new target positionw
                     // Choose a random direction (up, down, left, or right)
                     int direction = (int)(Math.random() * 4);
@@ -127,6 +141,11 @@ public class AIEntity {
                 entity.position.y += entity.speed * entity.deltaTime * direction.y;
                 entity.animationUtil.updateAnimation(entity.animationDirection, entity.animationIdleFrame);
                 entity.animationUtil.updateStateTime();
+            } else {
+                entity.animationUtil.updateAnimation("idle", 0);
+                entity.animationUtil.updateAnimation("idle");
+                entity.animationUtil.updateAnimation("idle", 0);
+            }
             }
     
             @Override
@@ -212,7 +231,12 @@ public class AIEntity {
     }
 
     public void playerCollided(){
+        idleTime = 2;
         stateMachine.changeState(AIState.IDLE);
+    }
+
+    public void oppositeDirection(){
+        targetPosition = new Vector2(position.x - (targetPosition.x - position.x), position.y - (targetPosition.y - position.y));
     }
 
     public void handleCollision() {

@@ -5,6 +5,9 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
 
 
 
@@ -13,6 +16,9 @@ public class TextUtil {
     float stateTime = 0f;
     boolean isAnimating = false;
     Animation < TextureRegion > paperAnimation;
+    FreeTypeFontGenerator generator;
+FreeTypeFontParameter parameter;
+    BitmapFont font;
 
     public void loadTextBox(){
     Texture textBoxTexture = new Texture(Gdx.files.internal("spritesheets/textbox.png"));
@@ -37,26 +43,33 @@ public class TextUtil {
 
     paperAnimation = new Animation < TextureRegion > (.03f, paperFrames);
 
+    generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/dogica.ttf"));
+    parameter = new FreeTypeFontParameter();
+    parameter.size = 14; // Set the size of the font
+    font = generator.generateFont(parameter); // Generate the BitmapFont
+    font.setColor(0, 0, 0, 1);
+
+    generator.dispose();
+
     }
 
     public void renderText(SpriteBatch spriteBatch, float playerX, float playerY){
+        stateTime += Gdx.graphics.getDeltaTime();
         if(isAnimating){
         spriteBatch.begin();
+        currentFrame = paperAnimation.getKeyFrame(stateTime, false);
         spriteBatch.draw(currentFrame, playerX - 576, playerY - 640, 1152, 1280);
+        if(currentFrame == paperAnimation.getKeyFrame(15, false)){
+        font.draw(spriteBatch, "Hello, World!", playerX, playerY - 400);
+        }
         spriteBatch.end();
+        } else {
+            stateTime = 0f;
         }
     }
 
     public void isAnimating(boolean isAnimating){
         this.isAnimating = isAnimating;
-    }
-
-    public void updateStateTime(){
-        stateTime += Gdx.graphics.getDeltaTime();
-        currentFrame = paperAnimation.getKeyFrame(stateTime, false);
-        if(!isAnimating){
-            stateTime = 0f;
-        }
     }
 
 }

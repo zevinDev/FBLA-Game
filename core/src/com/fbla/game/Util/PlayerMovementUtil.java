@@ -12,6 +12,7 @@ public class PlayerMovementUtil {
     private float playerY;
     private float playerSpeed;
     private AnimationUtil animationUtil;
+    private boolean movementDisabled = false;
 
     public PlayerMovementUtil(float playerX, float playerY, float playerSpeed, AnimationUtil animationUtil){
         this.playerX = playerX;
@@ -21,6 +22,9 @@ public class PlayerMovementUtil {
     }
 
     public void updateMovement(){
+        if(movementDisabled){
+            return;
+        }
         if (Gdx.input.isKeyPressed(Keys.W) && Gdx.input.isKeyPressed(Keys.D)) {
             this.playerY += Gdx.graphics.getDeltaTime() * playerSpeed;
             this.playerX += Gdx.graphics.getDeltaTime() * (playerSpeed + 25) / 1.5;
@@ -61,6 +65,14 @@ public class PlayerMovementUtil {
 
     public float getPlayerX(){
         return playerX;
+    }
+
+    public void disableMovement(){
+        movementDisabled = true;
+    }
+
+    public void enableMovement(){
+        movementDisabled = false;
     }
 
     public float getPlayerY(){
